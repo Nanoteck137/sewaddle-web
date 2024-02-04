@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.noUi-target {
+    @apply border-none h-2 hover:h-3 !important
+}
+
+.noUi-base {
+    @apply bg-red-600
+}
+
+.noUi-origin {
+
+}
+.noUi-horizontal .noUi-handle {
+    @apply opacity-0 translate-y-[-50%] top-1 group-hover:top-1.5 group-hover:opacity-100 !important
+}
+
+.noUi-active .noUi-horizontal .noUi-handle {
+    opacity: 1.0;
+}
+
+.noUi-handle {
+    @apply w-6 h-6 rounded-full !important
+}
+
+.noUi-handle::after {
+    display: none !important
+}
+
+.noUi-handle::before {
+    display: none !important
+}
+
+/* .noUi-connects {
+    @apply border-green-800
+} */
