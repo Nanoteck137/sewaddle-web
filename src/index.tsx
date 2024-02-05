@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import "./index.css";
 import Home from "./pages/Home";
 import Serie from "./pages/Serie";
+import View from "./pages/View";
 
 const root = document.getElementById("root");
 
@@ -18,6 +19,7 @@ render(
         <Route path="/">
           <Route path="/" component={Home} />
           <Route path="/serie/:id" component={Serie} />
+          <Route path="/view/:id" component={View} />
         </Route>
       </Router>
     </QueryClientProvider>

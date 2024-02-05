@@ -37,13 +37,13 @@ const Serie = () => {
           <p>{serie.data?.name}</p>
           <img src={serie.data?.cover} alt="Cover Image" />
 
-          <div>
+          <div class="flex flex-col">
             <For each={chapters.data?.chapters}>
               {(chapter) => {
                 return (
-                  <p>
+                  <a href={`/view/${chapter.id}`}>
                     {chapter.index} - {chapter.title}
-                  </p>
+                  </a>
                 );
               }}
             </For>
