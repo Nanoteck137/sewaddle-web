@@ -1,41 +1,39 @@
 import { useParams, useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
-import { Match, Show, Switch, createEffect, createMemo } from "solid-js";
+import { Match, Show, Switch, createMemo } from "solid-js";
 import { getChapterById } from "../api/chapter";
 
 const View = () => {
   const params = useParams<{ id: string }>();
 
-  const [searchParams, setSearchParams] = useSearchParams<{ page?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams<{
+    page: string;
+  }>();
 
   const chapter = createQuery(() => ({
     queryKey: ["chapters", params.id],
     queryFn: () => getChapterById(params.id),
   }));
 
-  createEffect(() => {
-    console.log(chapter.data?.pages.length);
-  });
-
-  createEffect(() => {
-    console.log(searchParams.page);
-    if (!searchParams.page || searchParams.page == "0") {
-      setSearchParams({ page: "1" });
+  const currentPage = createMemo(() => {
+    if (searchParams.page) {
+      return parseInt(searchParams.page);
     }
+
+    return 0;
   });
 
   const page = createMemo(() => {
-    const page = parseInt(searchParams.page || "0") - 1;
+    const page = currentPage();
     return chapter.data?.pages[page];
   });
 
   const nextPage = () => {
     if (!chapter.data) return;
 
-    const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
-    const nextPage = currentPage + 1;
+    const nextPage = currentPage() + 1;
     if (nextPage < chapter.data.pages.length + 1) {
-      setSearchParams({ page: (currentPage + 1).toString() });
+      setSearchParams({ page: nextPage.toString() });
     }
   };
 
