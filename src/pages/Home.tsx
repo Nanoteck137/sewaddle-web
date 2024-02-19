@@ -1,15 +1,29 @@
 import { createQuery } from "@tanstack/solid-query";
-import { For, Match, Switch } from "solid-js";
+import { For, Match, Show, Switch } from "solid-js";
 import { getSeries } from "../api/serie";
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
+  const auth = useAuth();
+
   const series = createQuery(() => ({
     queryKey: ["series"],
     queryFn: getSeries,
   }));
 
+  const user = auth.getUser();
+
   return (
     <>
+      <Show when={!!user()}>
+        <p>{user()?.username}</p>
+        <button onClick={() => auth.signOut()}>Logout</button>
+      </Show>
+
+      <Show when={!user()}>
+        <a href="/login">Login</a>
+      </Show>
+
       <Switch>
         <Match when={series.isLoading}>
           <p>Loading...</p>
