@@ -1,14 +1,16 @@
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch } from "solid-js";
-import { getSeries } from "../api/serie";
+import { useApiClient } from "../context/ApiClientContext";
 import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
   const auth = useAuth();
 
+  const apiClient = useApiClient();
+
   const series = createQuery(() => ({
     queryKey: ["series"],
-    queryFn: getSeries,
+    queryFn: () => apiClient.getArtists(),
   }));
 
   const user = auth.getUser();

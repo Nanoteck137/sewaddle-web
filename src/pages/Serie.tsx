@@ -1,19 +1,21 @@
 import { useParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Switch } from "solid-js";
-import { getSerieById, getSerieChaptersById } from "../api/serie";
+import { useApiClient } from "../context/ApiClientContext";
 
 const Serie = () => {
   const params = useParams<{ id: string }>();
 
+  const apiClient = useApiClient();
+
   const serie = createQuery(() => ({
     queryKey: ["series", params.id],
-    queryFn: () => getSerieById(params.id),
+    queryFn: () => apiClient.getSerieById(params.id),
   }));
 
   const chapters = createQuery(() => ({
     queryKey: ["series", params.id, "chapters"],
-    queryFn: () => getSerieChaptersById(params.id),
+    queryFn: () => apiClient.getSerieChaptersById(params.id),
   }));
 
   return (
@@ -41,8 +43,8 @@ const Serie = () => {
             <For each={chapters.data?.chapters}>
               {(chapter) => {
                 return (
-                  <a href={`/view/${chapter.id}`}>
-                    {chapter.index} - {chapter.title}
+                  <a href={`/view/${serie.data?.id}/${chapter.number}`}>
+                    {chapter.number} - {chapter.title}
                   </a>
                 );
               }}
