@@ -1,6 +1,11 @@
 import { useParams, useSearchParams } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
-import { Match, Show, Switch, createMemo } from "solid-js";
+import {
+  HiSolidChevronLeft,
+  HiSolidChevronRight,
+  HiSolidXMark,
+} from "solid-icons/hi";
+import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -79,88 +84,65 @@ const View = () => {
     if (!chapter.data) return;
 
     const nextPage = currentPage() + 1;
-    if (nextPage < chapter.data.pages.length + 1) {
+    if (nextPage < chapter.data.pages.length) {
       setSearchParams({ page: nextPage.toString() });
     }
   };
 
+  const prevPage = () => {
+    if (!chapter.data) return;
+
+    const prevPage = currentPage() - 1;
+    if (prevPage >= 0) {
+      setSearchParams({ page: prevPage.toString() });
+    }
+  };
+
+  const [showMenu, setShowMenu] = createSignal(false);
+
   return (
-    <>
-      <p>
-        View Page: {params.serieId} - {params.chapterNumber}
-      </p>
-      <p>Page: {searchParams.page}</p>
-      <button
-        onClick={() => {
-          if (!chapter.data || !auth.token) return;
+    <Switch>
+      <Match when={chapter.isLoading}>
+        <p>Loading...</p>
+      </Match>
 
-          // markChapter.mutate({
-          //   chapterId: chapter.data.id,
-          //   userId: auth.token,
-          // });
-        }}
-      >
-        Mark Chapter
-      </button>
+      <Match when={chapter.isError}>
+        <p>Error: {chapter.error?.message}</p>
+      </Match>
 
-      <button
-        onClick={() => {
-          if (!chapter.data || !auth.token) return;
+      <Match when={chapter.isSuccess}>
+        <Show when={page()}>
+          <div class="flex h-screen w-full items-center justify-center py-2">
+            <img
+              class="max-h-full border-4 border-red-400 object-scale-down"
+              src={page()}
+              alt="Page"
+            />
+          </div>
+        </Show>
 
-          // unmarkChapter.mutate({
-          //   chapterId: chapter.data.id,
-          //   userId: auth.token,
-          // });
-        }}
-      >
-        Unmark Chapter
-      </button>
+        <div
+          class={`fixed h-20 w-full bg-purple-700/60 transition-[bottom] ${showMenu() ? "bottom-0" : "-bottom-20"}`}
+        >
+          <button
+            class="absolute -top-6 right-[50%] h-6 w-10 translate-x-[50%] bg-red-500"
+            onClick={() => setShowMenu((val) => !val)}
+          ></button>
 
-      <button
-        onClick={() => {
-          nextPage();
-        }}
-      >
-        Click
-      </button>
-
-      <Switch>
-        <Match when={chapter.isLoading}>
-          <p>Loading...</p>
-        </Match>
-
-        <Match when={chapter.isError}>
-          <p>Error: {chapter.error?.message}</p>
-        </Match>
-
-        <Match when={chapter.isSuccess}>
-          <p>{chapter.data?.title}</p>
-          <p>{chapter.data?.number}</p>
-
-          <a href={`/serie/${chapter.data?.serieId}`}>Goto Serie</a>
-
-          <Show when={chapter.data?.nextChapter}>
-            <a
-              href={`/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`}
-            >
-              Next Chapter
+          <div class="flex h-full w-full items-center justify-center">
+            <a href={`/serie/${chapter.data?.serieId}`}>
+              <HiSolidXMark class="h-8 w-8" />
             </a>
-          </Show>
-
-          <Show when={chapter.data?.prevChapter}>
-            <a
-              href={`/view/${chapter.data?.serieId}/${chapter.data?.prevChapter}`}
-            >
-              Prev Chapter
-            </a>
-          </Show>
-
-          <Show when={page()}>
-            <img src={page()} alt="Page" />
-          </Show>
-        </Match>
-      </Switch>
-    </>
+            <button onClick={nextPage}>
+              <HiSolidChevronLeft class="h-8 w-8" />
+            </button>
+            <button onClick={prevPage}>
+              <HiSolidChevronRight class="h-8 w-8" />
+            </button>
+          </div>
+        </div>
+      </Match>
+    </Switch>
   );
 };
 
