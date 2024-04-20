@@ -1,11 +1,20 @@
-import { useParams, useSearchParams } from "@solidjs/router";
+import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import {
+  HiSolidChevronDoubleLeft,
+  HiSolidChevronDoubleRight,
   HiSolidChevronLeft,
   HiSolidChevronRight,
   HiSolidXMark,
 } from "solid-icons/hi";
-import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
+import {
+  Match,
+  Show,
+  Switch,
+  createMemo,
+  createSignal,
+  onMount,
+} from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -80,12 +89,30 @@ const View = () => {
     return chapter.data?.pages[page];
   });
 
+  const navigate = useNavigate();
+  const [showLastChapter, setShowLastChapter] = createSignal(false);
+
   const nextPage = () => {
     if (!chapter.data) return;
 
-    const nextPage = currentPage() + 1;
-    if (nextPage < chapter.data.pages.length) {
-      setSearchParams({ page: nextPage.toString() });
+    const page = currentPage();
+    const nextPage = page + 1;
+    const isLastPage = page === chapter.data.pages.length - 1;
+
+    if (isLastPage) {
+      if (showLastChapter()) {
+        console.log("Goto next chapter");
+        navigate(
+          `/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`,
+        );
+        setShowLastChapter(false);
+      } else {
+        setShowLastChapter(true);
+      }
+    } else {
+      if (nextPage < chapter.data.pages.length) {
+        setSearchParams({ page: nextPage.toString() });
+      }
     }
   };
 
@@ -97,6 +124,10 @@ const View = () => {
       setSearchParams({ page: prevPage.toString() });
     }
   };
+
+  onMount(() => {
+    setShowLastChapter(false);
+  });
 
   const [showMenu, setShowMenu] = createSignal(false);
 
@@ -112,6 +143,18 @@ const View = () => {
 
       <Match when={chapter.isSuccess}>
         <Show when={page()}>
+          <Show when={showLastChapter()}>
+            <div class="absolute left-[50%] top-[50%] z-10 -translate-x-[50%] -translate-y-[50%] rounded bg-red-800 p-10 text-center">
+              <p class="text-white">Last Chapter</p>
+              {/* <a
+                href={`/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`}
+                class="text-blue-300"
+              >
+                Goto Next Chapter
+              </a> */}
+            </div>
+          </Show>
+
           <button
             class="absolute left-0 h-full w-1/2 bg-red-300/60"
             onClick={nextPage}
@@ -142,12 +185,40 @@ const View = () => {
             <a href={`/serie/${chapter.data?.serieId}`}>
               <HiSolidXMark class="h-8 w-8" />
             </a>
+            <Show
+              when={chapter.data?.nextChapter}
+              fallback={
+                <p>
+                  <HiSolidChevronDoubleLeft class="h-8 w-8 text-blue-200" />
+                </p>
+              }
+            >
+              <a
+                href={`/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`}
+              >
+                <HiSolidChevronDoubleLeft class="h-8 w-8" />
+              </a>
+            </Show>
             <button onClick={nextPage}>
               <HiSolidChevronLeft class="h-8 w-8" />
             </button>
             <button onClick={prevPage}>
               <HiSolidChevronRight class="h-8 w-8" />
             </button>
+            <Show
+              when={chapter.data?.prevChapter}
+              fallback={
+                <p>
+                  <HiSolidChevronDoubleRight class="h-8 w-8 text-blue-200" />
+                </p>
+              }
+            >
+              <a
+                href={`/view/${chapter.data?.serieId}/${chapter.data?.prevChapter}`}
+              >
+                <HiSolidChevronDoubleRight class="h-8 w-8" />
+              </a>
+            </Show>
           </div>
         </div>
       </Match>
