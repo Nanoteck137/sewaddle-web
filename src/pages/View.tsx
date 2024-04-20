@@ -112,9 +112,18 @@ const View = () => {
 
       <Match when={chapter.isSuccess}>
         <Show when={page()}>
+          <button
+            class="absolute left-0 h-full w-1/2 bg-red-300/60"
+            onClick={nextPage}
+          ></button>
+          <button
+            class="absolute right-0 h-full w-1/2 bg-blue-300/60"
+            onClick={prevPage}
+          ></button>
+
           <div class="flex h-screen w-full items-center justify-center py-2">
             <img
-              class="max-h-full border-4 border-red-400 object-scale-down"
+              class="max-h-full border-2 object-scale-down"
               src={page()}
               alt="Page"
             />
