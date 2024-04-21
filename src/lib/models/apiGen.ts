@@ -13,6 +13,7 @@ export const Chapter = z.object({
   serieId: z.string(),
   number: z.number(),
   title: z.string(),
+  coverArt: z.string(),
 });
 export type Chapter = z.infer<typeof Chapter>;
 
@@ -43,6 +44,7 @@ export const GetChapterById = z.object({
   serieId: z.string(),
   number: z.number(),
   title: z.string(),
+  coverArt: z.string(),
   nextChapter: z.number().optional().nullable(),
   prevChapter: z.number().optional().nullable(),
   pages: z.array(z.string()),
