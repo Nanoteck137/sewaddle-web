@@ -147,7 +147,7 @@ const View = () => {
     }
   });
 
-  const [showMenu, setShowMenu] = createSignal(false);
+  const [isBottomMenuOpen, setBottomMenuOpen] = createSignal(false);
 
   return (
     <Switch>
@@ -192,14 +192,14 @@ const View = () => {
         </Show>
 
         <div
-          class={`fixed h-20 w-full bg-purple-700/60 transition-[bottom] ${showMenu() ? "bottom-0" : "-bottom-20"}`}
+          class={`fixed h-20 w-full bg-purple-700/60 transition-[bottom] ${isBottomMenuOpen() ? "bottom-0" : "-bottom-20"}`}
         >
           <button
             class="absolute -top-6 right-[50%] flex h-6 w-10 translate-x-[50%] items-center justify-center rounded-t-md bg-red-500"
-            onClick={() => setShowMenu((val) => !val)}
+            onClick={() => setBottomMenuOpen((val) => !val)}
           >
             <HiSolidChevronUp
-              class={`h-6 w-6 transition-[rotate] ${showMenu() ? "rotate-180" : ""}`}
+              class={`h-6 w-6 transition-[rotate] ${isBottomMenuOpen() ? "rotate-180" : ""}`}
             />
           </button>
 
