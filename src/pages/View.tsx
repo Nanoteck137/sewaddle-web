@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
-import { createMutation, createQuery } from "@tanstack/solid-query";
+import { createQuery } from "@tanstack/solid-query";
 import {
   HiSolidArrowLongLeft,
   HiSolidArrowLongRight,
@@ -8,6 +8,7 @@ import {
   HiSolidChevronLeft,
   HiSolidChevronRight,
   HiSolidChevronUp,
+  HiSolidXMark,
 } from "solid-icons/hi";
 import {
   Match,
@@ -19,37 +20,36 @@ import {
   onMount,
 } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
-import { useAuth } from "../context/AuthContext";
 
-async function markChapterFn(chapterId: string, userToken: string) {
-  console.log("Mark Chapter", chapterId, userToken);
-  const res = await fetch(
-    `http://localhost:3000/api/v1/chapters/${chapterId}/mark`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    },
-  );
+// async function markChapterFn(chapterId: string, userToken: string) {
+//   console.log("Mark Chapter", chapterId, userToken);
+//   const res = await fetch(
+//     `http://localhost:3000/api/v1/chapters/${chapterId}/mark`,
+//     {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${userToken}`,
+//       },
+//     },
+//   );
 
-  console.log(await res.json());
-}
+//   console.log(await res.json());
+// }
 
-async function unmarkChapterFn(chapterId: string, userToken: string) {
-  console.log("Unmark Chapter", chapterId, userToken);
-  const res = await fetch(
-    `http://localhost:3000/api/v1/chapters/${chapterId}/unmark`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
-    },
-  );
+// async function unmarkChapterFn(chapterId: string, userToken: string) {
+//   console.log("Unmark Chapter", chapterId, userToken);
+//   const res = await fetch(
+//     `http://localhost:3000/api/v1/chapters/${chapterId}/unmark`,
+//     {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${userToken}`,
+//       },
+//     },
+//   );
 
-  console.log(await res.json());
-}
+//   console.log(await res.json());
+// }
 
 const View = () => {
   const params = useParams<{ serieId: string; chapterNumber: string }>();
@@ -60,7 +60,7 @@ const View = () => {
 
   const apiClient = useApiClient();
 
-  const auth = useAuth();
+  // const auth = useAuth();
 
   const chapter = createQuery(() => ({
     queryKey: [params.serieId, "chapters", params.chapterNumber],
@@ -69,15 +69,15 @@ const View = () => {
       apiClient.getChapterById(params.serieId, parseInt(params.chapterNumber)),
   }));
 
-  const markChapter = createMutation(() => ({
-    mutationFn: (data: { chapterId: string; userId: string }) =>
-      markChapterFn(data.chapterId, data.userId),
-  }));
+  // const markChapter = createMutation(() => ({
+  //   mutationFn: (data: { chapterId: string; userId: string }) =>
+  //     markChapterFn(data.chapterId, data.userId),
+  // }));
 
-  const unmarkChapter = createMutation(() => ({
-    mutationFn: (data: { chapterId: string; userId: string }) =>
-      unmarkChapterFn(data.chapterId, data.userId),
-  }));
+  // const unmarkChapter = createMutation(() => ({
+  //   mutationFn: (data: { chapterId: string; userId: string }) =>
+  //     unmarkChapterFn(data.chapterId, data.userId),
+  // }));
 
   const currentPage = createMemo(() => {
     if (searchParams.page) {
@@ -204,9 +204,9 @@ const View = () => {
           </button>
 
           <div class="flex h-full w-full items-center justify-center">
-            {/* <a href={`/serie/${chapter.data?.serieId}`}>
+            <a href={`/serie/${chapter.data?.serieId}`}>
               <HiSolidXMark class="h-8 w-8" />
-            </a> */}
+            </a>
             <button onClick={gotoLastPage}>
               <HiSolidArrowLongLeft class="h-8 w-8" />
             </button>
