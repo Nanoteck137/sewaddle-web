@@ -42,7 +42,7 @@ const Serie = () => {
             </p>
             <div class="h-2"></div>
             <img
-              class="rounded border"
+              class="max-h-[400px] rounded border"
               src={serie.data?.cover}
               alt="Cover Image"
             />
