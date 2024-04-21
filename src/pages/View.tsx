@@ -1,16 +1,18 @@
 import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import {
+  HiSolidArrowLongLeft,
+  HiSolidArrowLongRight,
   HiSolidChevronDoubleLeft,
   HiSolidChevronDoubleRight,
   HiSolidChevronLeft,
   HiSolidChevronRight,
-  HiSolidXMark,
 } from "solid-icons/hi";
 import {
   Match,
   Show,
   Switch,
+  createEffect,
   createMemo,
   createSignal,
   onMount,
@@ -123,10 +125,25 @@ const View = () => {
     if (prevPage >= 0) {
       setSearchParams({ page: prevPage.toString() });
     }
+    setShowLastChapter(false);
+  };
+
+  const gotoFirstPage = () => {
+    setSearchParams({ page: 0 });
+  };
+
+  const gotoLastPage = () => {
+    setSearchParams({ page: (chapter.data?.pages.length || 0) - 1 });
   };
 
   onMount(() => {
     setShowLastChapter(false);
+  });
+
+  createEffect(() => {
+    if (chapter.data && searchParams.page === "last") {
+      gotoLastPage();
+    }
   });
 
   const [showMenu, setShowMenu] = createSignal(false);
@@ -156,11 +173,11 @@ const View = () => {
           </Show>
 
           <button
-            class="absolute left-0 h-full w-1/2 bg-red-300/60"
+            class="absolute left-0 h-full w-1/2 cursor-w-resize bg-red-300/60"
             onClick={nextPage}
           ></button>
           <button
-            class="absolute right-0 h-full w-1/2 bg-blue-300/60"
+            class="absolute right-0 h-full w-1/2 cursor-e-resize bg-blue-300/60"
             onClick={prevPage}
           ></button>
 
@@ -182,9 +199,12 @@ const View = () => {
           ></button>
 
           <div class="flex h-full w-full items-center justify-center">
-            <a href={`/serie/${chapter.data?.serieId}`}>
+            {/* <a href={`/serie/${chapter.data?.serieId}`}>
               <HiSolidXMark class="h-8 w-8" />
-            </a>
+            </a> */}
+            <button onClick={gotoLastPage}>
+              <HiSolidArrowLongLeft class="h-8 w-8" />
+            </button>
             <Show
               when={chapter.data?.nextChapter}
               fallback={
@@ -219,6 +239,9 @@ const View = () => {
                 <HiSolidChevronDoubleRight class="h-8 w-8" />
               </a>
             </Show>
+            <button onClick={gotoFirstPage}>
+              <HiSolidArrowLongRight class="h-8 w-8" />
+            </button>
           </div>
         </div>
       </Match>
