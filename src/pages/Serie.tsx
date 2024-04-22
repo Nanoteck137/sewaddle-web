@@ -37,15 +37,19 @@ const Serie = () => {
 
         <Match when={serie.isSuccess && chapters.isSuccess}>
           <div class="px-2">
-            <p class="border-b border-black p-2 text-center text-2xl">
-              {serie.data?.name}
-            </p>
-            <div class="h-2"></div>
-            <img
-              class="max-h-[400px] rounded border"
-              src={serie.data?.cover}
-              alt="Cover Image"
-            />
+            <div class="flex flex-col py-2 md:flex-row-reverse md:justify-end">
+              <p class="h-fit flex-grow border-b border-black px-2 pb-2 text-center text-2xl">
+                {serie.data?.name}
+              </p>
+              <div class="h-2 w-2"></div>
+              <div class="flex w-fit">
+                <img
+                  class="max-h-[400px] rounded border"
+                  src={serie.data?.cover}
+                  alt="Cover Image"
+                />
+              </div>
+            </div>
 
             <div class="flex flex-col gap-2">
               <For each={chapters.data?.chapters}>
@@ -57,7 +61,7 @@ const Serie = () => {
                         navigate(`/view/${chapter.serieId}/${chapter.number}`);
                       }}
                     >
-                      <p class="w-12 text-right font-mono">
+                      <p class="w-14 text-right font-mono">
                         {chapter.number}.
                       </p>
                       <img
