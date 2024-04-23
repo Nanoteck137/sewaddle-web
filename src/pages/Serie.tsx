@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
-import { For, Match, Switch } from "solid-js";
+import { For, Match, Show, Switch } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
 
 const Serie = () => {
@@ -50,6 +50,15 @@ const Serie = () => {
                 />
               </div>
             </div>
+
+            <Show when={!!serie.data?.user?.bookmark}>
+              <a
+                class="rounded bg-gray-300 p-2 hover:bg-gray-400"
+                href={`/view/${serie.data?.id}/${serie.data?.user?.bookmark?.chapterNumber}?page=${serie.data?.user?.bookmark?.page}`}
+              >
+                Continue
+              </a>
+            </Show>
 
             <div class="flex flex-col gap-2">
               <For each={chapters.data?.chapters}>
