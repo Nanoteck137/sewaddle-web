@@ -1,6 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import {
+  HiSolidArchiveBox,
   HiSolidArrowLongLeft,
   HiSolidArrowLongRight,
   HiSolidBookmark,
@@ -22,6 +23,8 @@ import {
 } from "solid-js";
 import toast from "solid-toast";
 import { useApiClient } from "../context/ApiClientContext";
+
+type Layout = "paged" | "scroll";
 
 const View = () => {
   const params = useParams<{ serieId: string; chapterNumber: string }>();
@@ -63,6 +66,8 @@ const View = () => {
 
     return 0;
   });
+
+  const [layout, setLayout] = createSignal<Layout>("paged");
 
   const page = createMemo(() => {
     const page = currentPage();
@@ -125,6 +130,13 @@ const View = () => {
     }
   });
 
+  createEffect(() => {
+    if (layout() == "scroll") {
+      const page = parseInt(searchParams.page || "0");
+      document.getElementById(`page-${page}`)?.scrollIntoView();
+    }
+  });
+
   const [isBottomMenuOpen, setBottomMenuOpen] = createSignal(false);
 
   return (
@@ -138,36 +150,53 @@ const View = () => {
       </Match>
 
       <Match when={chapter.isSuccess}>
-        <Show when={page()}>
-          <Show when={showLastChapter()}>
-            <div class="absolute left-[50%] top-[50%] z-10 -translate-x-[50%] -translate-y-[50%] rounded bg-red-800 p-10 text-center">
-              <p class="text-white">Last Chapter</p>
-              {/* <a
-                href={`/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`}
-                class="text-blue-300"
-              >
-                Goto Next Chapter
-              </a> */}
-            </div>
-          </Show>
+        <Switch>
+          <Match when={layout() === "paged"}>
+            <Show when={page()}>
+              <Show when={showLastChapter()}>
+                <div class="absolute left-[50%] top-[50%] z-10 -translate-x-[50%] -translate-y-[50%] rounded bg-red-800 p-10 text-center">
+                  <p class="text-white">Last Chapter</p>
+                  {/* <a
+                    href={`/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`}
+                    class="text-blue-300"
+                  >
+                    Goto Next Chapter
+                  </a> */}
+                </div>
+              </Show>
 
-          <button
-            class="absolute left-0 h-full w-1/2 cursor-w-resize bg-red-300/60"
-            onClick={nextPage}
-          ></button>
-          <button
-            class="absolute right-0 h-full w-1/2 cursor-e-resize bg-blue-300/60"
-            onClick={prevPage}
-          ></button>
+              <button
+                class="absolute left-0 h-full w-1/2 cursor-w-resize bg-red-300/60"
+                onClick={nextPage}
+              ></button>
+              <button
+                class="absolute right-0 h-full w-1/2 cursor-e-resize bg-blue-300/60"
+                onClick={prevPage}
+              ></button>
 
-          <div class="flex h-screen w-full items-center justify-center py-2">
-            <img
-              class="max-h-full border-2 object-scale-down"
-              src={page()}
-              alt="Page"
-            />
-          </div>
-        </Show>
+              <div class="flex h-screen w-full items-center justify-center py-2">
+                <img
+                  class="max-h-full border-2 object-scale-down"
+                  src={page()}
+                  alt="Page"
+                />
+              </div>
+            </Show>
+          </Match>
+          <Match when={layout() === "scroll"}>
+            {chapter.data?.pages.map((page, i) => {
+              return (
+                <div id={`page-${i}`} class="flex justify-center">
+                  <img
+                    class="border-l border-r"
+                    src={page}
+                    alt={`Page ${i}`}
+                  />
+                </div>
+              );
+            })}
+          </Match>
+        </Switch>
 
         <div
           class={`fixed h-20 w-full bg-purple-700/60 transition-[bottom] ${isBottomMenuOpen() ? "bottom-0" : "-bottom-20"}`}
@@ -228,6 +257,21 @@ const View = () => {
 
             <button onClick={() => updateBookmark.mutate()}>
               <HiSolidBookmark class="h-8 w-8" />
+            </button>
+
+            <button
+              onClick={() => {
+                setLayout((prev) => {
+                  switch (prev) {
+                    case "paged":
+                      return "scroll";
+                    case "scroll":
+                      return "paged";
+                  }
+                });
+              }}
+            >
+              <HiSolidArchiveBox class="h-8 w-8" />
             </button>
           </div>
         </div>
