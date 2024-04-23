@@ -145,8 +145,25 @@ export default class ApiClient {
     if (res.status === "error") {
       throw new Error(res.error.message);
     }
+  }
 
-    return res.data;
+  async bookmark(serieId: string, chapter: number, page: number) {
+    // TODO(patrik): Throw error?
+    if (!this.token) return;
+
+    const res = await this.request(
+      "/api/v1/user/updateBookmark",
+      "POST",
+      z.undefined(),
+      {
+        serieId,
+        chapter,
+        page,
+      },
+    );
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
   }
 
   async getUser() {
