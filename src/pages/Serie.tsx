@@ -70,7 +70,12 @@ const Serie = () => {
                         src={chapter.coverArt}
                         alt="Chapter Cover Art"
                       />
-                      <p class="group-hover:underline">{chapter.title}</p>
+                      <div class="flex flex-col">
+                        <p class="group-hover:underline">{chapter.title}</p>
+                        {chapter.user && chapter.user.isMarked && (
+                          <p class="text-sm text-gray-500">Read</p>
+                        )}
+                      </div>
                     </div>
                   );
                 }}

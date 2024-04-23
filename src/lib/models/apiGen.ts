@@ -9,18 +9,19 @@ export const Serie = z.object({
 });
 export type Serie = z.infer<typeof Serie>;
 
+export const ChapterUserData = z.object({
+  isMarked: z.boolean(),
+});
+export type ChapterUserData = z.infer<typeof ChapterUserData>;
+
 export const Chapter = z.object({
   serieId: z.string(),
   number: z.number(),
   title: z.string(),
   coverArt: z.string(),
+  user: ChapterUserData.optional().nullable(),
 });
 export type Chapter = z.infer<typeof Chapter>;
-
-export const ChapterUserData = z.object({
-  isMarked: z.boolean(),
-});
-export type ChapterUserData = z.infer<typeof ChapterUserData>;
 
 export const GetSeries = z.object({
   series: z.array(Serie),
@@ -45,10 +46,10 @@ export const GetChapterById = z.object({
   number: z.number(),
   title: z.string(),
   coverArt: z.string(),
+  user: ChapterUserData.optional().nullable(),
   nextChapter: z.number().optional().nullable(),
   prevChapter: z.number().optional().nullable(),
   pages: z.array(z.string()),
-  user: ChapterUserData.optional().nullable(),
 });
 export type GetChapterById = z.infer<typeof GetChapterById>;
 
