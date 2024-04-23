@@ -20,6 +20,7 @@ import {
   createSignal,
   onMount,
 } from "solid-js";
+import toast from "solid-toast";
 import { useApiClient } from "../context/ApiClientContext";
 
 // async function markChapterFn(chapterId: string, userToken: string) {
@@ -82,6 +83,9 @@ const View = () => {
         chapter.data!.number,
         currentPage(),
       ),
+    onError: () => {
+      toast.error("Failed to update bookmark");
+    },
   }));
 
   // const unmarkChapter = createMutation(() => ({
@@ -116,7 +120,6 @@ const View = () => {
       if (apiClient.user) markChapter.mutate();
 
       if (showLastChapter()) {
-        console.log("Goto next chapter");
         navigate(
           `/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`,
         );

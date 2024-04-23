@@ -11,6 +11,7 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
+import { Toaster } from "solid-toast";
 import { ApiClientProvider } from "./context/ApiClientContext";
 import "./index.css";
 import ApiClient, { User } from "./lib/api/client";
@@ -66,6 +67,7 @@ render(
 
           <Route path="/view/:serieId/:chapterNumber" component={View} />
         </Router>
+        <Toaster />
       </ApiClientProvider>
     </QueryClientProvider>
   ),
