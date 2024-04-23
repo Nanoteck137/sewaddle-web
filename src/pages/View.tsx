@@ -122,6 +122,13 @@ const View = () => {
 
   onMount(() => {
     setShowLastChapter(false);
+
+    // NOTE(patrik): I hate it
+    setTimeout(() => {
+      const page = parseInt(searchParams.page || "0");
+      console.log(document.getElementById(`page-${page}`));
+      document.getElementById(`page-${page}`)?.scrollIntoView();
+    }, 400);
   });
 
   createEffect(() => {
@@ -184,17 +191,15 @@ const View = () => {
             </Show>
           </Match>
           <Match when={layout() === "scroll"}>
-            {chapter.data?.pages.map((page, i) => {
-              return (
-                <div id={`page-${i}`} class="flex justify-center">
-                  <img
-                    class="border-l border-r"
-                    src={page}
-                    alt={`Page ${i}`}
-                  />
-                </div>
-              );
-            })}
+            <div>
+              {chapter.data?.pages.map((page, i) => {
+                return (
+                  <div id={`page-${i}`} class="flex justify-center">
+                    <img class="border" src={page} alt={`Page ${i}`} />
+                  </div>
+                );
+              })}
+            </div>
           </Match>
         </Switch>
 
