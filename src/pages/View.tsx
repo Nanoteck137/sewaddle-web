@@ -3,6 +3,7 @@ import { createMutation, createQuery } from "@tanstack/solid-query";
 import {
   HiSolidArrowLongLeft,
   HiSolidArrowLongRight,
+  HiSolidBookmark,
   HiSolidChevronDoubleLeft,
   HiSolidChevronDoubleRight,
   HiSolidChevronLeft,
@@ -72,6 +73,15 @@ const View = () => {
   const markChapter = createMutation(() => ({
     mutationFn: () =>
       apiClient.markChapters(chapter.data!.serieId, [chapter.data!.number]),
+  }));
+
+  const updateBookmark = createMutation(() => ({
+    mutationFn: () =>
+      apiClient.bookmark(
+        chapter.data!.serieId,
+        chapter.data!.number,
+        currentPage(),
+      ),
   }));
 
   // const unmarkChapter = createMutation(() => ({
@@ -248,6 +258,10 @@ const View = () => {
             </Show>
             <button onClick={gotoFirstPage}>
               <HiSolidArrowLongRight class="h-8 w-8" />
+            </button>
+
+            <button onClick={() => updateBookmark.mutate()}>
+              <HiSolidBookmark class="h-8 w-8" />
             </button>
           </div>
         </div>
