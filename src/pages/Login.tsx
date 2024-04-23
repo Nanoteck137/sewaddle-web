@@ -1,8 +1,8 @@
-import { reporter, ValidationMessage } from "@felte/reporter-solid";
+import { reporter } from "@felte/reporter-solid";
 import { createForm } from "@felte/solid";
 import { validator } from "@felte/validator-zod";
 import { Navigate, useNavigate } from "@solidjs/router";
-import { Show } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import { z } from "zod";
 import { useApiClient } from "../context/ApiClientContext";
 
@@ -22,27 +22,51 @@ const Login = () => {
       // auth.signIn(values.username, values.password).then(() => {
       //   navigate("/");
       // });
-      apiClient.login(values.username, values.password);
     },
   });
+
+  const [error, setError] = createSignal<string>();
+
+  const submit = (values: { username: string; password: string }) => {
+    apiClient
+      .login(values.username, values.password)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((e) => {
+        setError(e.message);
+      });
+  };
 
   return (
     <>
       <Show when={true} fallback={<Navigate href="/" />}>
         <p>Login Page</p>
 
-        <form use:form>
+        {error() && <p>Error: {error()}</p>}
+
+        <form
+          ref={(e) => {
+            const inputs = e.querySelectorAll("input");
+
+            e.addEventListener("submit", (e) => {
+              e.preventDefault();
+
+              const values: Record<string, string> = {};
+              inputs.forEach((i) => {
+                values[i.name] = i.value;
+              });
+
+              const res = schema.parse(values);
+              submit(res);
+            });
+          }}
+        >
           <label for="username">Username</label>
           <input id="username" name="username" type="text" />
-          <ValidationMessage for="username">
-            {(message) => <p>{message?.[0]}</p>}
-          </ValidationMessage>
 
           <label for="password">Password</label>
           <input id="password" name="password" type="password" />
-          <ValidationMessage for="password">
-            {(message) => <p>{message?.[0]}</p>}
-          </ValidationMessage>
 
           <button type="submit">Login</button>
         </form>
