@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
-import { createQuery } from "@tanstack/solid-query";
+import { createMutation, createQuery } from "@tanstack/solid-query";
 import {
   HiSolidArrowLongLeft,
   HiSolidArrowLongRight,
@@ -69,10 +69,10 @@ const View = () => {
       apiClient.getChapterById(params.serieId, parseInt(params.chapterNumber)),
   }));
 
-  // const markChapter = createMutation(() => ({
-  //   mutationFn: (data: { chapterId: string; userId: string }) =>
-  //     markChapterFn(data.chapterId, data.userId),
-  // }));
+  const markChapter = createMutation(() => ({
+    mutationFn: () =>
+      apiClient.markChapter(chapter.data!.serieId, chapter.data!.number),
+  }));
 
   // const unmarkChapter = createMutation(() => ({
   //   mutationFn: (data: { chapterId: string; userId: string }) =>
@@ -103,6 +103,8 @@ const View = () => {
     const isLastPage = page === chapter.data.pages.length - 1;
 
     if (isLastPage) {
+      if (apiClient.user) markChapter.mutate();
+
       if (showLastChapter()) {
         console.log("Goto next chapter");
         navigate(

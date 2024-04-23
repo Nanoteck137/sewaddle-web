@@ -129,6 +129,19 @@ export default class ApiClient {
     return res.data;
   }
 
+  async markChapter(serieId: string, chapterNumber: number) {
+    const res = await this.request(
+      `/api/v1/chapters/${serieId}/${chapterNumber}/mark`,
+      "POST",
+      z.undefined(),
+    );
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+
+    return res.data;
+  }
+
   async getUser() {
     const res = await this.request(
       "/api/auth/me",
