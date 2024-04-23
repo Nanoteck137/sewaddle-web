@@ -129,11 +129,18 @@ export default class ApiClient {
     return res.data;
   }
 
-  async markChapter(serieId: string, chapterNumber: number) {
+  async markChapters(serieId: string, chapters: number[]) {
+    // TODO(patrik): Throw error?
+    if (!this.token) return;
+
     const res = await this.request(
-      `/api/v1/chapters/${serieId}/${chapterNumber}/mark`,
+      "/api/v1/user/markChapters",
       "POST",
       z.undefined(),
+      {
+        serieId,
+        chapters,
+      },
     );
     if (res.status === "error") {
       throw new Error(res.error.message);
