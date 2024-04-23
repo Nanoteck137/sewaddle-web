@@ -1,11 +1,8 @@
 import { createQuery } from "@tanstack/solid-query";
-import { For, Match, Show, Switch } from "solid-js";
+import { For, Match, Switch } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
-import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
-  const auth = useAuth();
-
   const apiClient = useApiClient();
 
   const series = createQuery(() => ({
@@ -13,19 +10,8 @@ const Home = () => {
     queryFn: () => apiClient.getArtists(),
   }));
 
-  const user = auth.getUser();
-
   return (
     <>
-      <Show when={!!user()}>
-        <p>{user()?.username}</p>
-        <button onClick={() => auth.signOut()}>Logout</button>
-      </Show>
-
-      <Show when={!user()}>
-        <a href="/login">Login</a>
-      </Show>
-
       <Switch>
         <Match when={series.isLoading}>
           <p>Loading...</p>

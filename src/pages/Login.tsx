@@ -4,7 +4,7 @@ import { validator } from "@felte/validator-zod";
 import { Navigate, useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
 import { z } from "zod";
-import { useAuth } from "../context/AuthContext";
+import { useApiClient } from "../context/ApiClientContext";
 
 const schema = z.object({
   username: z.string().min(1),
@@ -12,24 +12,23 @@ const schema = z.object({
 });
 
 const Login = () => {
-  const auth = useAuth();
-
   const navigate = useNavigate();
+
+  const apiClient = useApiClient();
 
   const { form } = createForm<z.infer<typeof schema>>({
     extend: [validator({ schema }), reporter()],
     onSubmit: (values) => {
-      auth.signIn(values.username, values.password).then(() => {
-        navigate("/");
-      });
+      // auth.signIn(values.username, values.password).then(() => {
+      //   navigate("/");
+      // });
+      apiClient.login(values.username, values.password);
     },
   });
 
-  const user = auth.getUser();
-
   return (
     <>
-      <Show when={!user()} fallback={<Navigate href="/" />}>
+      <Show when={true} fallback={<Navigate href="/" />}>
         <p>Login Page</p>
 
         <form use:form>

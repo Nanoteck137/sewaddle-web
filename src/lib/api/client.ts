@@ -1,5 +1,5 @@
+import { createNanoEvents, Emitter } from "nanoevents";
 import { z } from "zod";
-import { AuthHandler } from "../../AuthHandler";
 import { createApiResponse } from "../../models/api";
 import {
   GetChapterById,
@@ -8,28 +8,47 @@ import {
   GetSeries,
 } from "../models/apiGen";
 
+export type User = {
+  id: string;
+  username: string;
+};
+
 export default class ApiClient {
   baseUrl: string;
-  auth: AuthHandler;
+  token?: string;
+  user?: User;
 
-  constructor(baseUrl: string, auth: AuthHandler) {
+  events: Emitter;
+
+  constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
-    this.auth = auth;
+    this.events = createNanoEvents();
+
+    const token = localStorage.getItem("user-token");
+    if (token) {
+      this.setToken(token);
+    }
   }
 
   async request<T extends z.ZodTypeAny>(
     endpoint: string,
     method: string,
     bodySchema: T,
+    body?: any,
   ) {
     const headers: Record<string, string> = {};
-    if (this.auth.token) {
-      headers["Authentication"] = `Bearer ${this.auth.token}`;
+    if (this.token) {
+      headers["Authorization"] = `Bearer ${this.token}`;
+    }
+
+    if (body) {
+      headers["Content-Type"] = "application/json";
     }
 
     const res = await fetch(this.baseUrl + endpoint, {
       method,
       headers,
+      body: body ? JSON.stringify(body) : null,
     });
 
     const Schema = createApiResponse(bodySchema, z.undefined());
@@ -37,6 +56,30 @@ export default class ApiClient {
     const data = await res.json();
     return await Schema.parseAsync(data);
   }
+
+  async login(username: string, password: string) {
+    const res = await this.request(
+      "/api/auth/signin",
+      "POST",
+      z.object({ token: z.string() }),
+      {
+        username,
+        password,
+      },
+    );
+
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+
+    await this.setToken(res.data.token);
+  }
+
+  async register(
+    username: string,
+    password: string,
+    passwordConfirm: string,
+  ) {}
 
   async getArtists() {
     const res = await this.request("/api/v1/series", "GET", GetSeries);
@@ -84,5 +127,40 @@ export default class ApiClient {
     }
 
     return res.data;
+  }
+
+  async getUser() {
+    const res = await this.request(
+      "/api/auth/me",
+      "GET",
+      z.object({
+        id: z.string().cuid2(),
+        username: z.string(),
+      }),
+    );
+
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+
+    this.user = res.data;
+  }
+
+  async setToken(newToken: string) {
+    this.token = newToken;
+    await this.getUser();
+
+    this.events.emit("onTokenChanged", this.token, this.user);
+
+    localStorage.setItem("user-token", newToken);
+  }
+
+  registerOnTokenChangedCallback(
+    callback: (token?: string, user?: User) => void,
+  ) {
+    const unsub = this.events.on("onTokenChanged", callback);
+    callback(this.token, this.user);
+
+    return unsub;
   }
 }
