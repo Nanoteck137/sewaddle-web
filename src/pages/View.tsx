@@ -23,36 +23,6 @@ import {
 import toast from "solid-toast";
 import { useApiClient } from "../context/ApiClientContext";
 
-// async function markChapterFn(chapterId: string, userToken: string) {
-//   console.log("Mark Chapter", chapterId, userToken);
-//   const res = await fetch(
-//     `http://localhost:3000/api/v1/chapters/${chapterId}/mark`,
-//     {
-//       method: "POST",
-//       headers: {
-//         Authorization: `Bearer ${userToken}`,
-//       },
-//     },
-//   );
-
-//   console.log(await res.json());
-// }
-
-// async function unmarkChapterFn(chapterId: string, userToken: string) {
-//   console.log("Unmark Chapter", chapterId, userToken);
-//   const res = await fetch(
-//     `http://localhost:3000/api/v1/chapters/${chapterId}/unmark`,
-//     {
-//       method: "POST",
-//       headers: {
-//         Authorization: `Bearer ${userToken}`,
-//       },
-//     },
-//   );
-
-//   console.log(await res.json());
-// }
-
 const View = () => {
   const params = useParams<{ serieId: string; chapterNumber: string }>();
 
@@ -61,8 +31,6 @@ const View = () => {
   }>();
 
   const apiClient = useApiClient();
-
-  // const auth = useAuth();
 
   const chapter = createQuery(() => ({
     queryKey: [params.serieId, "chapters", params.chapterNumber],
@@ -87,11 +55,6 @@ const View = () => {
       toast.error("Failed to update bookmark");
     },
   }));
-
-  // const unmarkChapter = createMutation(() => ({
-  //   mutationFn: (data: { chapterId: string; userId: string }) =>
-  //     unmarkChapterFn(data.chapterId, data.userId),
-  // }));
 
   const currentPage = createMemo(() => {
     if (searchParams.page) {
