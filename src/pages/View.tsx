@@ -71,7 +71,7 @@ const View = () => {
 
   const markChapter = createMutation(() => ({
     mutationFn: () =>
-      apiClient.markChapter(chapter.data!.serieId, chapter.data!.number),
+      apiClient.markChapters(chapter.data!.serieId, [chapter.data!.number]),
   }));
 
   // const unmarkChapter = createMutation(() => ({
