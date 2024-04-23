@@ -1,6 +1,3 @@
-import { reporter } from "@felte/reporter-solid";
-import { createForm } from "@felte/solid";
-import { validator } from "@felte/validator-zod";
 import { Navigate, useNavigate } from "@solidjs/router";
 import { Show, createSignal } from "solid-js";
 import { z } from "zod";
@@ -13,17 +10,7 @@ const schema = z.object({
 
 const Login = () => {
   const navigate = useNavigate();
-
   const apiClient = useApiClient();
-
-  const { form } = createForm<z.infer<typeof schema>>({
-    extend: [validator({ schema }), reporter()],
-    onSubmit: (values) => {
-      // auth.signIn(values.username, values.password).then(() => {
-      //   navigate("/");
-      // });
-    },
-  });
 
   const [error, setError] = createSignal<string>();
 
