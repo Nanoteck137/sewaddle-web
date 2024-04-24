@@ -13,15 +13,14 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        version = builtins.substring 0 8 self.lastModifiedDate;
+
         app = pkgs.buildNpmPackage {
           name = "sewaddle-web";
-          version = "v0.0.1";
+          inherit version;
+
           src = gitignore.lib.gitignoreSource ./.;
           npmDepsHash = "sha256-K89Vuj9VDmRbNdNvK9L+a0YdbDToOXYFtBZRrqFg89w=";
-
-          # postPatch = ''
-          #   cp frontend/package-lock.json .
-          # '';
 
           installPhase = ''
             runHook preInstall
@@ -32,7 +31,11 @@
 
       in with pkgs; {
         packages.default = app;
-        devShells.default = mkShell { buildInputs = [ pkgs.yarn nodejs node2nix ]; };
+        devShells.default = mkShell { 
+          buildInputs = [ 
+            nodejs 
+          ]; 
+        };
       }
     );
 }
