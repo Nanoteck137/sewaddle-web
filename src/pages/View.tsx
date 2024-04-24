@@ -124,11 +124,14 @@ const View = () => {
     setShowLastChapter(false);
 
     // NOTE(patrik): I hate it
-    setTimeout(() => {
-      const page = parseInt(searchParams.page || "0");
-      console.log(document.getElementById(`page-${page}`));
-      document.getElementById(`page-${page}`)?.scrollIntoView();
-    }, 400);
+
+    if (layout() == "scroll") {
+      setTimeout(() => {
+        const page = parseInt(searchParams.page || "0");
+        console.log(document.getElementById(`page-${page}`));
+        document.getElementById(`page-${page}`)?.scrollIntoView();
+      }, 400);
+    }
   });
 
   createEffect(() => {
