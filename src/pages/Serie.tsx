@@ -74,10 +74,10 @@ const Serie = () => {
                         {chapter.number}.
                       </p>
                       <img
-                        loading="lazy"
                         class="h-16 w-12 rounded border object-cover"
                         src={chapter.coverArt}
                         alt="Chapter Cover Art"
+                        loading="lazy"
                       />
                       <div class="flex flex-col">
                         <p class="group-hover:underline">{chapter.title}</p>
