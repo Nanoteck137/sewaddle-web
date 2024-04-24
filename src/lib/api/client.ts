@@ -1,6 +1,6 @@
 import { createNanoEvents, Emitter } from "nanoevents";
 import { z } from "zod";
-import { createApiResponse } from "../../models/api";
+import { createApiResponse } from "../models/api";
 import {
   GetChapterById,
   GetSerieById,
@@ -75,11 +75,11 @@ export default class ApiClient {
     await this.setToken(res.data.token);
   }
 
-  async register(
-    username: string,
-    password: string,
-    passwordConfirm: string,
-  ) {}
+  // async register(
+  //   username: string,
+  //   password: string,
+  //   passwordConfirm: string,
+  // ) {}
 
   async getArtists() {
     const res = await this.request("/api/v1/series", "GET", GetSeries);
