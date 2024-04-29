@@ -28,11 +28,10 @@
             runHook postInstall
           '';
         };
-
-      in with pkgs; {
+      in {
         packages.default = app;
-        devShells.default = mkShell { 
-          buildInputs = [ 
+        devShells.default = pkgs.mkShell { 
+          buildInputs = with pkgs; [ 
             nodejs 
           ]; 
         };
