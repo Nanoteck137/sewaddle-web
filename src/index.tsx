@@ -23,7 +23,12 @@ import View from "./pages/View";
 const root = document.getElementById("root");
 
 const queryClient = new QueryClient();
-const apiClient = new ApiClient("http://10.28.28.6:3000");
+const apiBaseUrl = import.meta.env.PROD
+  ? ""
+  : import.meta.env.VITE_API_URL == undefined
+    ? ""
+    : import.meta.env.VITE_API_URL;
+const apiClient = new ApiClient(apiBaseUrl);
 
 const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
   const [user, setUser] = createSignal<User>();
