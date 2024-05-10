@@ -13,7 +13,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = builtins.substring 0 8 self.lastModifiedDate;
+        version = self.shortRev or "dirty";
 
         app = pkgs.buildNpmPackage {
           name = "sewaddle-web";
