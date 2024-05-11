@@ -75,11 +75,19 @@ export default class ApiClient {
     await this.setToken(res.data.token);
   }
 
-  // async register(
-  //   username: string,
-  //   password: string,
-  //   passwordConfirm: string,
-  // ) {}
+  async register(username: string, password: string, passwordConfirm: string) {
+    const res = await this.request("/api/auth/signup", "POST", z.object({}), {
+      username,
+      password,
+      passwordConfirm,
+    });
+
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+
+    await this.login(username, password);
+  }
 
   async getArtists() {
     const res = await this.request("/api/v1/series", "GET", GetSeries);

@@ -17,6 +17,7 @@ import "./index.css";
 import ApiClient, { User } from "./lib/api/client";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Serie from "./pages/Serie";
 import View from "./pages/View";
 
@@ -68,6 +69,7 @@ render(
             <Route path="/" component={Home} />
             <Route path="/serie/:id" component={Serie} />
             <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
           </Route>
 
           <Route path="/view/:serieId/:chapterNumber" component={View} />
