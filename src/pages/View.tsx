@@ -176,11 +176,11 @@ const View = () => {
               </Show>
 
               <button
-                class="absolute left-0 h-full w-1/2 cursor-w-resize bg-red-300/60"
+                class="absolute left-0 h-full w-1/2 cursor-w-resize"
                 onClick={nextPage}
               ></button>
               <button
-                class="absolute right-0 h-full w-1/2 cursor-e-resize bg-blue-300/60"
+                class="absolute right-0 h-full w-1/2 cursor-e-resize"
                 onClick={prevPage}
               ></button>
 
@@ -207,7 +207,7 @@ const View = () => {
         </Switch>
 
         <div
-          class={`fixed h-20 w-full bg-purple-700/60 transition-[bottom] ${isBottomMenuOpen() ? "bottom-0" : "-bottom-20"}`}
+          class={`fixed h-20 w-full bg-purple-700/80 text-gray-300 transition-[bottom] ${isBottomMenuOpen() ? "bottom-0" : "-bottom-20"}`}
         >
           <button
             class="absolute -top-6 right-[50%] flex h-6 w-10 translate-x-[50%] items-center justify-center rounded-t-md bg-red-500"
