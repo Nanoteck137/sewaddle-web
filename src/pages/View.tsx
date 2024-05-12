@@ -125,7 +125,7 @@ const View = () => {
 
     // NOTE(patrik): I hate it
 
-    if (layout() == "scroll") {
+    if (layout() == "scroll" && searchParams.page) {
       setTimeout(() => {
         const page = parseInt(searchParams.page || "0");
         console.log(document.getElementById(`page-${page}`));
@@ -194,6 +194,20 @@ const View = () => {
             </Show>
           </Match>
           <Match when={layout() === "scroll"}>
+            <div class="flex justify-center py-20">
+              <p
+                class="cursor-pointer text-3xl"
+                onClick={() => {
+                  if (!chapter.data?.prevChapter) return;
+
+                  navigate(
+                    `/view/${chapter.data.serieId}/${chapter.data.prevChapter}`,
+                  );
+                }}
+              >
+                Previous Chapter
+              </p>
+            </div>
             <div>
               {chapter.data?.pages.map((page, i) => {
                 return (
@@ -202,6 +216,20 @@ const View = () => {
                   </div>
                 );
               })}
+            </div>
+            <div class="flex justify-center py-20">
+              <p
+                class="cursor-pointer text-3xl"
+                onClick={() => {
+                  if (!chapter.data?.nextChapter) return;
+
+                  navigate(
+                    `/view/${chapter.data.serieId}/${chapter.data.nextChapter}`,
+                  );
+                }}
+              >
+                Next Chapter
+              </p>
             </div>
           </Match>
         </Switch>
