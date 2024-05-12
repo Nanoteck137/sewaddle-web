@@ -43,8 +43,8 @@ const View = () => {
   }));
 
   const markChapter = createMutation(() => ({
-    mutationFn: () =>
-      apiClient.markChapters(chapter.data!.serieId, [chapter.data!.number]),
+    mutationFn: (data: { serieId: string; chapterNumber: number }) =>
+      apiClient.markChapters(data.serieId, [data.chapterNumber]),
   }));
 
   const updateBookmark = createMutation(() => ({
@@ -85,7 +85,12 @@ const View = () => {
     const isLastPage = page === chapter.data.pages.length - 1;
 
     if (isLastPage) {
-      if (apiClient.user) markChapter.mutate();
+      if (apiClient.user) {
+        markChapter.mutate({
+          serieId: chapter.data.serieId,
+          chapterNumber: chapter.data.number,
+        });
+      }
 
       if (showLastChapter()) {
         navigate(
@@ -221,8 +226,14 @@ const View = () => {
               <p
                 class="cursor-pointer text-3xl"
                 onClick={() => {
-                  if (!chapter.data?.nextChapter) return;
+                  if (apiClient.user && chapter.data) {
+                    markChapter.mutate({
+                      serieId: chapter.data.serieId,
+                      chapterNumber: chapter.data.number,
+                    });
+                  }
 
+                  if (!chapter.data?.nextChapter) return;
                   navigate(
                     `/view/${chapter.data.serieId}/${chapter.data.nextChapter}`,
                   );
