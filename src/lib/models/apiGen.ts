@@ -44,7 +44,7 @@ export const GetSerieById = z.object({
   name: z.string(),
   cover: z.string(),
   chapterCount: z.number(),
-  user: SerieUserData.nullable(),
+  user: SerieUserData.nullable().optional(),
 });
 export type GetSerieById = z.infer<typeof GetSerieById>;
 
