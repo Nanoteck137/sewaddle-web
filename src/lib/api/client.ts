@@ -155,6 +155,24 @@ export default class ApiClient {
     }
   }
 
+  async unmarkChapters(serieId: string, chapters: number[]) {
+    // TODO(patrik): Throw error?
+    if (!this.token) return;
+
+    const res = await this.request(
+      "/api/v1/user/unmarkChapters",
+      "POST",
+      z.undefined(),
+      {
+        serieId,
+        chapters,
+      },
+    );
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+  }
+
   async bookmark(serieId: string, chapter: number, page: number) {
     // TODO(patrik): Throw error?
     if (!this.token) return;
