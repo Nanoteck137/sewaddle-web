@@ -1,5 +1,9 @@
 import { useNavigate, useParams } from "@solidjs/router";
-import { createQuery } from "@tanstack/solid-query";
+import {
+  createMutation,
+  createQuery,
+  useQueryClient,
+} from "@tanstack/solid-query";
 import { HiSolidCheck } from "solid-icons/hi";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
@@ -14,9 +18,39 @@ const Serie = () => {
     queryFn: () => apiClient.getSerieById(params.id),
   }));
 
+  const queryClient = useQueryClient();
+
   const chapters = createQuery(() => ({
     queryKey: ["series", params.id, "chapters"],
     queryFn: () => apiClient.getSerieChaptersById(params.id),
+  }));
+
+  const markChapter = createMutation(() => ({
+    mutationFn: (data: { serieId: string; chapterNumbers: number[] }) =>
+      apiClient.markChapters(data.serieId, data.chapterNumbers),
+    onSuccess: () => {
+      queryClient
+        .invalidateQueries({
+          queryKey: ["series", params.id, "chapters"],
+        })
+        .then(() => {
+          setSelectedItems([]);
+        });
+    },
+  }));
+
+  const unmarkChapter = createMutation(() => ({
+    mutationFn: (data: { serieId: string; chapterNumbers: number[] }) =>
+      apiClient.unmarkChapters(data.serieId, data.chapterNumbers),
+    onSuccess: () => {
+      queryClient
+        .invalidateQueries({
+          queryKey: ["series", params.id, "chapters"],
+        })
+        .then(() => {
+          setSelectedItems([]);
+        });
+    },
   }));
 
   const navigate = useNavigate();
@@ -25,6 +59,10 @@ const Serie = () => {
 
   const isSelected = (chapterNumber: number) => {
     return !!selectedItems().find((i) => i === chapterNumber);
+  };
+
+  const showSelectionMenu = () => {
+    return selectedItems().length > 0;
   };
 
   return (
@@ -151,6 +189,34 @@ const Serie = () => {
                 }}
               </For>
             </div>
+            <Show when={showSelectionMenu()}>
+              <div class="fixed bottom-8 left-1/2 h-10 w-64 -translate-x-1/2 bg-red-200">
+                <button
+                  onClick={() => {
+                    if (!serie.data) return;
+
+                    markChapter.mutate({
+                      serieId: serie.data.id,
+                      chapterNumbers: selectedItems(),
+                    });
+                  }}
+                >
+                  Mark
+                </button>
+                <button
+                  onClick={() => {
+                    if (!serie.data) return;
+
+                    unmarkChapter.mutate({
+                      serieId: serie.data.id,
+                      chapterNumbers: selectedItems(),
+                    });
+                  }}
+                >
+                  Unmark
+                </button>
+              </div>
+            </Show>
           </div>
         </Match>
       </Switch>
