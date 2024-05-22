@@ -7,6 +7,7 @@ import {
   GetSerieChaptersById,
   GetSeries,
   GetSystemInfo,
+  PostSystemSetupBody,
 } from "../models/apiGen";
 
 export type User = {
@@ -222,6 +223,19 @@ export default class ApiClient {
     }
 
     return res.data;
+  }
+
+  async setup(body: PostSystemSetupBody) {
+    const res = await this.request(
+      "/api/v1/system/setup",
+      "POST",
+      z.undefined(),
+      body,
+    );
+
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
   }
 
   async setToken(newToken: string) {
