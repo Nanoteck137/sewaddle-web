@@ -5,7 +5,8 @@ import {
   useQueryClient,
 } from "@tanstack/solid-query";
 import { HiSolidCheck } from "solid-icons/hi";
-import { For, Match, Show, Switch, createSignal } from "solid-js";
+import InfiniteScroll from "solid-infinite-scroll";
+import { Match, Show, Switch, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
 import {
   PostUserMarkChaptersBody,
@@ -69,6 +70,12 @@ const Serie = () => {
     return selectedItems().length > 0;
   };
 
+  const [scrollIndex, setScrollIndex] = createSignal(10);
+  const scrollNext = () =>
+    setScrollIndex(
+      Math.min(scrollIndex() + 50, chapters.data?.chapters.length || 0),
+    );
+
   return (
     <>
       <Switch>
@@ -110,7 +117,11 @@ const Serie = () => {
             </Show>
 
             <div class="flex flex-col gap-2">
-              <For each={chapters.data?.chapters}>
+              <InfiniteScroll
+                each={chapters.data?.chapters.slice(0, scrollIndex())}
+                hasMore={scrollIndex() < (chapters.data?.chapters.length || 0)}
+                next={scrollNext}
+              >
                 {(chapter, i) => {
                   return (
                     <div class="flex items-center justify-between border-b">
@@ -129,7 +140,6 @@ const Serie = () => {
                           class="h-16 w-12 rounded border object-cover"
                           src={chapter.coverArt}
                           alt="Chapter Cover Art"
-                          loading="lazy"
                         />
                         <div class="flex flex-col">
                           <p class="group-hover:underline">{chapter.title}</p>
@@ -191,7 +201,7 @@ const Serie = () => {
                     </div>
                   );
                 }}
-              </For>
+              </InfiniteScroll>
             </div>
             <Show when={showSelectionMenu()}>
               <div class="fixed bottom-8 left-1/2 h-10 w-64 -translate-x-1/2 bg-red-200">
