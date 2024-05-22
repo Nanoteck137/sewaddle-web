@@ -12,13 +12,14 @@ import {
   onMount,
 } from "solid-js";
 import { Toaster } from "solid-toast";
-import { ApiClientProvider } from "./context/ApiClientContext";
+import { ApiClientProvider, useApiClient } from "./context/ApiClientContext";
 import "./index.css";
 import ApiClient, { User } from "./lib/api/client";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Serie from "./pages/Serie";
+import Setup from "./pages/Setup";
 import View from "./pages/View";
 
 const root = document.getElementById("root");
@@ -60,20 +61,37 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
   );
 };
 
+const AppRouter = () => {
+  const apiClient = useApiClient();
+
+  onMount(async () => {
+    const systemInfo = await apiClient.getSystemInfo();
+
+    if (!systemInfo.isSetup && window.location.pathname !== "/setup") {
+      window.location.href = "/setup";
+    }
+  });
+
+  return (
+    <Router>
+      <Route path="/" component={DefaultLayout}>
+        <Route path="/" component={Home} />
+        <Route path="/serie/:id" component={Serie} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+      </Route>
+
+      <Route path="/view/:serieId/:chapterNumber" component={View} />
+      <Route path="/setup" component={Setup} />
+    </Router>
+  );
+};
+
 render(
   () => (
     <QueryClientProvider client={queryClient}>
       <ApiClientProvider client={apiClient}>
-        <Router>
-          <Route path="/" component={DefaultLayout}>
-            <Route path="/" component={Home} />
-            <Route path="/serie/:id" component={Serie} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-          </Route>
-
-          <Route path="/view/:serieId/:chapterNumber" component={View} />
-        </Router>
+        <AppRouter />
         <Toaster />
       </ApiClientProvider>
     </QueryClientProvider>
