@@ -70,6 +70,10 @@ const AppRouter = () => {
     if (!systemInfo.isSetup && window.location.pathname !== "/setup") {
       window.location.href = "/setup";
     }
+
+    if (systemInfo.isSetup && window.location.pathname === "/setup") {
+      window.location.href = "/";
+    }
   });
 
   return (
