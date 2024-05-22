@@ -6,6 +6,7 @@ import {
   GetSerieById,
   GetSerieChaptersById,
   GetSeries,
+  GetSystemInfo,
 } from "../models/apiGen";
 
 export type User = {
@@ -207,6 +208,20 @@ export default class ApiClient {
     }
 
     this.user = res.data;
+  }
+
+  async getSystemInfo() {
+    const res = await this.request(
+      "/api/v1/system/info",
+      "GET",
+      GetSystemInfo,
+    );
+
+    if (res.status === "error") {
+      throw new Error(res.error.message);
+    }
+
+    return res.data;
   }
 
   async setToken(newToken: string) {

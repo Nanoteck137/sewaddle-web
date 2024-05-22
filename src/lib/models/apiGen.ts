@@ -75,3 +75,16 @@ export const GetLibraryStatus = z.object({
 });
 export type GetLibraryStatus = z.infer<typeof GetLibraryStatus>;
 
+export const GetSystemInfo = z.object({
+  version: z.string(),
+  isSetup: z.boolean(),
+});
+export type GetSystemInfo = z.infer<typeof GetSystemInfo>;
+
+export const PostSystemSetupBody = z.object({
+  username: z.string(),
+  password: z.string(),
+  passwordConfirm: z.string(),
+});
+export type PostSystemSetupBody = z.infer<typeof PostSystemSetupBody>;
+
