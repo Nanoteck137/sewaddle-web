@@ -67,7 +67,7 @@ export default class ApiClient {
 
   async login(body: PostAuthSigninBody) {
     const res = await this.request(
-      "/api/auth/signin",
+      "/api/v1/auth/signin",
       "POST",
       PostAuthSignin,
       body,
@@ -82,7 +82,7 @@ export default class ApiClient {
 
   async register(body: PostAuthSignupBody) {
     const res = await this.request(
-      "/api/auth/signup",
+      "/api/v1/auth/signup",
       "POST",
       PostAuthSignup,
       body,
@@ -95,13 +95,9 @@ export default class ApiClient {
     return res.data;
   }
 
-  async getArtists() {
+  async getSeries() {
     const res = await this.request("/api/v1/series", "GET", GetSeries);
-    if (res.status === "error") {
-      throw new Error(res.error.message);
-    }
-
-    return res.data;
+    return res;
   }
 
   async getSerieById(id: string) {
@@ -190,9 +186,13 @@ export default class ApiClient {
   }
 
   async getUser() {
-    const res = await this.request("/api/auth/me", "GET", GetAuthMe);
+    const res = await this.request("/api/v1/auth/me", "GET", GetAuthMe);
 
     if (res.status === "error") {
+      if (res.error.message === "Invalid Token") {
+        this.resetToken();
+      }
+
       throw new Error(res.error.message);
     }
 
@@ -226,12 +226,19 @@ export default class ApiClient {
     }
   }
 
+  async resetToken() {
+    this.token = undefined;
+    this.user = undefined;
+
+    localStorage.removeItem("user-token");
+    this.events.emit("onTokenChanged", this.token, this.user);
+  }
+
   async setToken(newToken: string) {
     this.token = newToken;
     await this.getUser();
 
     this.events.emit("onTokenChanged", this.token, this.user);
-
     localStorage.setItem("user-token", newToken);
   }
 
