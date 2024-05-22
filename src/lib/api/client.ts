@@ -2,18 +2,22 @@ import { createNanoEvents, Emitter } from "nanoevents";
 import { z } from "zod";
 import { createApiResponse } from "../models/api";
 import {
+  GetAuthMe,
   GetChapterById,
   GetSerieById,
   GetSerieChaptersById,
   GetSeries,
   GetSystemInfo,
+  PostAuthSignin,
+  PostAuthSigninBody,
+  PostAuthSignup,
+  PostAuthSignupBody,
   PostSystemSetupBody,
+  PostUserMarkChaptersBody,
+  PostUserUpdateBookmarkBody,
 } from "../models/apiGen";
 
-export type User = {
-  id: string;
-  username: string;
-};
+export type User = GetAuthMe;
 
 export default class ApiClient {
   baseUrl: string;
@@ -56,18 +60,17 @@ export default class ApiClient {
     const Schema = createApiResponse(bodySchema, z.undefined());
 
     const data = await res.json();
-    return await Schema.parseAsync(data);
+    const parsedData = await Schema.parseAsync(data);
+
+    return parsedData;
   }
 
-  async login(username: string, password: string) {
+  async login(body: PostAuthSigninBody) {
     const res = await this.request(
       "/api/auth/signin",
       "POST",
-      z.object({ token: z.string() }),
-      {
-        username,
-        password,
-      },
+      PostAuthSignin,
+      body,
     );
 
     if (res.status === "error") {
@@ -77,18 +80,19 @@ export default class ApiClient {
     await this.setToken(res.data.token);
   }
 
-  async register(username: string, password: string, passwordConfirm: string) {
-    const res = await this.request("/api/auth/signup", "POST", z.object({}), {
-      username,
-      password,
-      passwordConfirm,
-    });
+  async register(body: PostAuthSignupBody) {
+    const res = await this.request(
+      "/api/auth/signup",
+      "POST",
+      PostAuthSignup,
+      body,
+    );
 
     if (res.status === "error") {
       throw new Error(res.error.message);
     }
 
-    await this.login(username, password);
+    return res.data;
   }
 
   async getArtists() {
@@ -139,7 +143,7 @@ export default class ApiClient {
     return res.data;
   }
 
-  async markChapters(serieId: string, chapters: number[]) {
+  async markChapters(body: PostUserMarkChaptersBody) {
     // TODO(patrik): Throw error?
     if (!this.token) return;
 
@@ -147,17 +151,15 @@ export default class ApiClient {
       "/api/v1/user/markChapters",
       "POST",
       z.undefined(),
-      {
-        serieId,
-        chapters,
-      },
+      body,
     );
+
     if (res.status === "error") {
       throw new Error(res.error.message);
     }
   }
 
-  async unmarkChapters(serieId: string, chapters: number[]) {
+  async unmarkChapters(body: PostUserMarkChaptersBody) {
     // TODO(patrik): Throw error?
     if (!this.token) return;
 
@@ -165,17 +167,14 @@ export default class ApiClient {
       "/api/v1/user/unmarkChapters",
       "POST",
       z.undefined(),
-      {
-        serieId,
-        chapters,
-      },
+      body,
     );
     if (res.status === "error") {
       throw new Error(res.error.message);
     }
   }
 
-  async bookmark(serieId: string, chapter: number, page: number) {
+  async bookmark(body: PostUserUpdateBookmarkBody) {
     // TODO(patrik): Throw error?
     if (!this.token) return;
 
@@ -183,11 +182,7 @@ export default class ApiClient {
       "/api/v1/user/updateBookmark",
       "POST",
       z.undefined(),
-      {
-        serieId,
-        chapter,
-        page,
-      },
+      body,
     );
     if (res.status === "error") {
       throw new Error(res.error.message);
@@ -195,14 +190,7 @@ export default class ApiClient {
   }
 
   async getUser() {
-    const res = await this.request(
-      "/api/auth/me",
-      "GET",
-      z.object({
-        id: z.string().cuid2(),
-        username: z.string(),
-      }),
-    );
+    const res = await this.request("/api/auth/me", "GET", GetAuthMe);
 
     if (res.status === "error") {
       throw new Error(res.error.message);
