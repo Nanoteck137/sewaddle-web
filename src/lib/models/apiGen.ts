@@ -88,3 +88,64 @@ export const PostSystemSetupBody = z.object({
 });
 export type PostSystemSetupBody = z.infer<typeof PostSystemSetupBody>;
 
+export const ApiGetChapterByIdUser = z.object({
+  isMarked: z.boolean(),
+});
+export type ApiGetChapterByIdUser = z.infer<typeof ApiGetChapterByIdUser>;
+
+export const ApiPostRegisterBody = z.object({
+  username: z.string(),
+  password: z.string(),
+  passwordConfirm: z.string(),
+});
+export type ApiPostRegisterBody = z.infer<typeof ApiPostRegisterBody>;
+
+export const ApiPostRegister = z.object({
+  id: z.string(),
+  username: z.string(),
+});
+export type ApiPostRegister = z.infer<typeof ApiPostRegister>;
+
+export const ApiPostLoginBody = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+export type ApiPostLoginBody = z.infer<typeof ApiPostLoginBody>;
+
+export const ApiPostLogin = z.object({
+  token: z.string(),
+});
+export type ApiPostLogin = z.infer<typeof ApiPostLogin>;
+
+export const ApiGetMe = z.object({
+  id: z.string(),
+  username: z.string(),
+  isOwner: z.boolean(),
+});
+export type ApiGetMe = z.infer<typeof ApiGetMe>;
+
+export const ApiPostSerieUpdateBody = z.object({
+  serieId: z.string(),
+  chapterNumber: z.number(),
+});
+export type ApiPostSerieUpdateBody = z.infer<typeof ApiPostSerieUpdateBody>;
+
+export const ApiPostUserMarkChapters = z.object({
+  serieId: z.string(),
+  chapters: z.array(z.number()),
+});
+export type ApiPostUserMarkChapters = z.infer<typeof ApiPostUserMarkChapters>;
+
+export const ApiPostUserUnmarkChapters = z.object({
+  serieId: z.string(),
+  chapters: z.array(z.number()),
+});
+export type ApiPostUserUnmarkChapters = z.infer<typeof ApiPostUserUnmarkChapters>;
+
+export const ApiPostUserUpdateBookmark = z.object({
+  serieId: z.string(),
+  chapter: z.number(),
+  page: z.number(),
+});
+export type ApiPostUserUpdateBookmark = z.infer<typeof ApiPostUserUpdateBookmark>;
+
