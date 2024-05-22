@@ -7,6 +7,10 @@ import {
 import { HiSolidCheck } from "solid-icons/hi";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
+import {
+  PostUserMarkChaptersBody,
+  PostUserUnmarkChaptersBody,
+} from "../lib/models/apiGen";
 
 const Serie = () => {
   const params = useParams<{ id: string }>();
@@ -26,8 +30,8 @@ const Serie = () => {
   }));
 
   const markChapter = createMutation(() => ({
-    mutationFn: (data: { serieId: string; chapterNumbers: number[] }) =>
-      apiClient.markChapters(data.serieId, data.chapterNumbers),
+    mutationFn: (data: PostUserMarkChaptersBody) =>
+      apiClient.markChapters(data),
     onSuccess: () => {
       queryClient
         .invalidateQueries({
@@ -40,8 +44,8 @@ const Serie = () => {
   }));
 
   const unmarkChapter = createMutation(() => ({
-    mutationFn: (data: { serieId: string; chapterNumbers: number[] }) =>
-      apiClient.unmarkChapters(data.serieId, data.chapterNumbers),
+    mutationFn: (data: PostUserUnmarkChaptersBody) =>
+      apiClient.unmarkChapters(data),
     onSuccess: () => {
       queryClient
         .invalidateQueries({
@@ -197,7 +201,7 @@ const Serie = () => {
 
                     markChapter.mutate({
                       serieId: serie.data.id,
-                      chapterNumbers: selectedItems(),
+                      chapters: selectedItems(),
                     });
                   }}
                 >
@@ -209,7 +213,7 @@ const Serie = () => {
 
                     unmarkChapter.mutate({
                       serieId: serie.data.id,
-                      chapterNumbers: selectedItems(),
+                      chapters: selectedItems(),
                     });
                   }}
                 >
