@@ -20,14 +20,22 @@ const Serie = () => {
 
   const serie = createQuery(() => ({
     queryKey: ["series", params.id],
-    queryFn: () => apiClient.getSerieById(params.id),
+    queryFn: async () => {
+      const res = await apiClient.getSerieById(params.id);
+      if (res.status === "error") throw new Error(res.error.message);
+      return res.data;
+    },
   }));
 
   const queryClient = useQueryClient();
 
   const chapters = createQuery(() => ({
     queryKey: ["series", params.id, "chapters"],
-    queryFn: () => apiClient.getSerieChaptersById(params.id),
+    queryFn: async () => {
+      const res = await apiClient.getSerieChaptersById(params.id);
+      if (res.status === "error") throw new Error(res.error.message);
+      return res.data;
+    },
   }));
 
   const markChapter = createMutation(() => ({

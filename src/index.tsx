@@ -3,19 +3,12 @@ import { render } from "solid-js/web";
 
 import { Route, Router } from "@solidjs/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
-import {
-  Component,
-  ErrorBoundary,
-  JSX,
-  Show,
-  createSignal,
-  onCleanup,
-  onMount,
-} from "solid-js";
+import { Component, ErrorBoundary, JSX, Show, onMount } from "solid-js";
 import { Toaster } from "solid-toast";
 import { ApiClientProvider, useApiClient } from "./context/ApiClientContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./index.css";
-import ApiClient, { User } from "./lib/api/client";
+import { ApiClient, Auth } from "./lib/api/client";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -39,19 +32,11 @@ const apiBaseUrl = import.meta.env.PROD
     ? ""
     : import.meta.env.VITE_API_URL;
 const apiClient = new ApiClient(apiBaseUrl);
+const auth = new Auth(apiClient);
 
 const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
-  const [user, setUser] = createSignal<User>();
-
-  onMount(() => {
-    const unsub = apiClient.registerOnTokenChangedCallback((_token, user) => {
-      setUser(user);
-    });
-
-    onCleanup(() => {
-      unsub();
-    });
-  });
+  const auth = useAuth();
+  const user = auth.user();
 
   return (
     <>
@@ -61,7 +46,18 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
         </a>
 
         <Show when={!!user()}>
-          <p class="max-w-full text-ellipsis">{user()?.username}</p>
+          <div class="flex">
+            <p class="max-w-full text-ellipsis">{user()?.username}</p>
+            <div class="w-2"></div>
+            <button
+              class="text-blue-600"
+              onClick={() => {
+                auth.resetToken();
+              }}
+            >
+              Logout
+            </button>
+          </div>
         </Show>
       </header>
       <ErrorBoundary
@@ -80,12 +76,14 @@ const AppRouter = () => {
 
   onMount(async () => {
     const systemInfo = await apiClient.getSystemInfo();
+    // TODO(patrik): What to do here?
+    if (systemInfo.status === "error") return;
 
-    if (!systemInfo.isSetup && window.location.pathname !== "/setup") {
+    if (!systemInfo.data.isSetup && window.location.pathname !== "/setup") {
       window.location.href = "/setup";
     }
 
-    if (systemInfo.isSetup && window.location.pathname === "/setup") {
+    if (systemInfo.data.isSetup && window.location.pathname === "/setup") {
       window.location.href = "/";
     }
   });
@@ -109,8 +107,10 @@ render(
   () => (
     <QueryClientProvider client={queryClient}>
       <ApiClientProvider client={apiClient}>
-        <AppRouter />
-        <Toaster />
+        <AuthProvider auth={auth}>
+          <AppRouter />
+          <Toaster />
+        </AuthProvider>
       </ApiClientProvider>
     </QueryClientProvider>
   ),

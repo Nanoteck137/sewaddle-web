@@ -23,6 +23,7 @@ import {
 } from "solid-js";
 import toast from "solid-toast";
 import { useApiClient } from "../context/ApiClientContext";
+import { useAuth } from "../context/AuthContext";
 
 type Layout = "paged" | "scroll";
 
@@ -34,26 +35,39 @@ const View = () => {
   }>();
 
   const apiClient = useApiClient();
+  const auth = useAuth();
+  const user = auth.user();
 
   const chapter = createQuery(() => ({
     queryKey: [params.serieId, "chapters", params.chapterNumber],
     // TODO(patrik): Remove parseInt here
-    queryFn: () =>
-      apiClient.getChapterById(params.serieId, parseInt(params.chapterNumber)),
+    queryFn: async () => {
+      const res = await apiClient.getChapterById(
+        params.serieId,
+        parseInt(params.chapterNumber),
+      );
+      if (res.status === "error") {
+        throw new Error(res.error.message);
+      }
+      return res.data;
+    },
   }));
 
   const markChapter = createMutation(() => ({
     mutationFn: (data: { serieId: string; chapterNumber: number }) =>
-      apiClient.markChapters(data.serieId, [data.chapterNumber]),
+      apiClient.markChapters({
+        serieId: data.serieId,
+        chapters: [data.chapterNumber],
+      }),
   }));
 
   const updateBookmark = createMutation(() => ({
     mutationFn: () =>
-      apiClient.bookmark(
-        chapter.data!.serieId,
-        chapter.data!.number,
-        currentPage(),
-      ),
+      apiClient.bookmark({
+        serieId: chapter.data!.serieId,
+        chapter: chapter.data!.number,
+        page: currentPage(),
+      }),
     onError: () => {
       toast.error("Failed to update bookmark");
     },
@@ -85,7 +99,7 @@ const View = () => {
     const isLastPage = page === chapter.data.pages.length - 1;
 
     if (isLastPage) {
-      if (apiClient.user) {
+      if (!!user()) {
         markChapter.mutate({
           serieId: chapter.data.serieId,
           chapterNumber: chapter.data.number,
@@ -226,7 +240,7 @@ const View = () => {
               <p
                 class="cursor-pointer text-3xl"
                 onClick={() => {
-                  if (apiClient.user && chapter.data) {
+                  if (!!user() && chapter.data) {
                     markChapter.mutate({
                       serieId: chapter.data.serieId,
                       chapterNumber: chapter.data.number,
