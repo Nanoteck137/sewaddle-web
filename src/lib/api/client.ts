@@ -95,9 +95,8 @@ export default class ApiClient {
     return res.data;
   }
 
-  async getSeries() {
-    const res = await this.request("/api/v1/series", "GET", GetSeries);
-    return res;
+  getSeries() {
+    return this.request("/api/v1/series", "GET", GetSeries);
   }
 
   async getSerieById(id: string) {

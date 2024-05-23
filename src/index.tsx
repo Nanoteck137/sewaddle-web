@@ -5,6 +5,7 @@ import { Route, Router } from "@solidjs/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import {
   Component,
+  ErrorBoundary,
   JSX,
   Show,
   createSignal,
@@ -24,7 +25,14 @@ import View from "./pages/View";
 
 const root = document.getElementById("root");
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      throwOnError: true,
+    },
+  },
+});
 const apiBaseUrl = import.meta.env.PROD
   ? ""
   : import.meta.env.VITE_API_URL == undefined
@@ -56,7 +64,13 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
           <p class="max-w-full text-ellipsis">{user()?.username}</p>
         </Show>
       </header>
-      <main>{props.children}</main>
+      <ErrorBoundary
+        fallback={(e) => {
+          return <p class="text-red-700">Error: {e.message}</p>;
+        }}
+      >
+        <main>{props.children}</main>
+      </ErrorBoundary>
     </>
   );
 };

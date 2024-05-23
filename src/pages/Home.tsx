@@ -7,7 +7,11 @@ const Home = () => {
 
   const series = createQuery(() => ({
     queryKey: ["series"],
-    queryFn: () => apiClient.getArtists(),
+    queryFn: async () => {
+      const res = await apiClient.getSeries();
+      if (res.status === "error") throw new Error(res.error.message);
+      return res.data;
+    },
   }));
 
   return (
@@ -15,9 +19,6 @@ const Home = () => {
       <Switch>
         <Match when={series.isLoading}>
           <p>Loading...</p>
-        </Match>
-        <Match when={series.isError}>
-          <p>Error: {series.error?.message}</p>
         </Match>
         <Match when={series.isSuccess}>
           <div class="flex flex-col">
