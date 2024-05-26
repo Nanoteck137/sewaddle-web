@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <>
-      <Show when={!!user()} fallback={<Navigate href="/" />}>
+      <Show when={!user()} fallback={<Navigate href="/" />}>
         <p>Login Page</p>
 
         {error() && <p>Error: {error()}</p>}

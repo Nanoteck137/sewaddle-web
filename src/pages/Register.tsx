@@ -2,6 +2,7 @@ import { Navigate, useNavigate } from "@solidjs/router";
 import { Show, createSignal } from "solid-js";
 import { z } from "zod";
 import { useApiClient } from "../context/ApiClientContext";
+import { useAuth } from "../context/AuthContext";
 
 const schema = z.object({
   username: z.string().min(1),
@@ -12,6 +13,9 @@ const schema = z.object({
 const Register = () => {
   const navigate = useNavigate();
   const apiClient = useApiClient();
+
+  const auth = useAuth();
+  const user = auth.user();
 
   const [error, setError] = createSignal<string>();
 
@@ -32,8 +36,8 @@ const Register = () => {
 
   return (
     <>
-      <Show when={true} fallback={<Navigate href="/" />}>
-        <p>Login Page</p>
+      <Show when={!user()} fallback={<Navigate href="/" />}>
+        <p>Register Page</p>
 
         {error() && <p>Error: {error()}</p>}
 
