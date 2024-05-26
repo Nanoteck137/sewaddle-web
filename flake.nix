@@ -20,7 +20,7 @@
           inherit version;
 
           src = gitignore.lib.gitignoreSource ./.;
-          npmDepsHash = "sha256-K89Vuj9VDmRbNdNvK9L+a0YdbDToOXYFtBZRrqFg89w=";
+          npmDepsHash = "sha256-TKvP7NT9/fT4k2pyI2MYmDtX6cyu6xEvdtxmeFPZEXI=";
 
           installPhase = ''
             runHook preInstall
