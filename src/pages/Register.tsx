@@ -6,7 +6,7 @@ import { useApiClient } from "../context/ApiClientContext";
 const schema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
-  confirmPassword: z.string().min(1),
+  passwordConfirm: z.string().min(1),
 });
 
 const Register = () => {
@@ -18,10 +18,10 @@ const Register = () => {
   const submit = (values: {
     username: string;
     password: string;
-    confirmPassword: string;
+    passwordConfirm: string;
   }) => {
     apiClient
-      .register(values.username, values.password, values.confirmPassword)
+      .register(values)
       .then(() => {
         navigate("/");
       })
@@ -61,8 +61,8 @@ const Register = () => {
           <label for="password">Password</label>
           <input id="password" name="password" type="password" />
 
-          <label for="confirmPassword">Confirm Password</label>
-          <input id="confirmPassword" name="confirmPassword" type="password" />
+          <label for="passwordConfirm">Confirm Password</label>
+          <input id="passwordConfirm" name="passwordConfirm" type="password" />
 
           <button type="submit">Register</button>
         </form>
