@@ -21,7 +21,7 @@ const Setup = () => {
     const userFormData = Object.fromEntries(new FormData(userForm));
     const body = PostSystemSetupBody.parse(userFormData);
     apiClient
-      .setup(body)
+      .runSystemSetup(body)
       .then(() => (window.location.href = "/"))
       .catch((e) => console.error(e));
   }

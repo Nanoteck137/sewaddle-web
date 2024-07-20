@@ -19,7 +19,7 @@ const Login = () => {
   const [error, setError] = createSignal<string>();
 
   const submit = async (values: { username: string; password: string }) => {
-    const res = await apiClient.login(values);
+    const res = await apiClient.signin(values);
     if (res.status === "error") {
       setError(res.error.message);
       return;

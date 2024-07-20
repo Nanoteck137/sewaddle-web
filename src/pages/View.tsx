@@ -40,11 +40,10 @@ const View = () => {
 
   const chapter = createQuery(() => ({
     queryKey: [params.serieId, "chapters", params.chapterNumber],
-    // TODO(patrik): Remove parseInt here
     queryFn: async () => {
       const res = await apiClient.getChapterById(
         params.serieId,
-        parseInt(params.chapterNumber),
+        params.chapterNumber,
       );
       if (res.status === "error") {
         throw new Error(res.error.message);
@@ -63,13 +62,16 @@ const View = () => {
 
   const updateBookmark = createMutation(() => ({
     mutationFn: () =>
-      apiClient.bookmark({
+      apiClient.updateBookmark({
         serieId: chapter.data!.serieId,
         chapter: chapter.data!.number,
         page: currentPage(),
       }),
     onError: () => {
       toast.error("Failed to update bookmark");
+    },
+    onSuccess: () => {
+      toast.success("Updated bookmark");
     },
   }));
 

@@ -25,7 +25,7 @@ const Register = () => {
     passwordConfirm: string;
   }) => {
     apiClient
-      .register(values)
+      .signup(values)
       .then(() => {
         navigate("/");
       })

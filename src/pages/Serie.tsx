@@ -32,7 +32,7 @@ const Serie = () => {
   const chapters = createQuery(() => ({
     queryKey: ["series", params.id, "chapters"],
     queryFn: async () => {
-      const res = await apiClient.getSerieChaptersById(params.id);
+      const res = await apiClient.getSerieChapters(params.id);
       if (res.status === "error") throw new Error(res.error.message);
       return res.data;
     },
