@@ -1,5 +1,5 @@
 import { Component, createContext, JSX, useContext } from "solid-js";
-import { Auth } from "../lib/api/client";
+import { Auth } from "../lib/api/auth";
 
 const AuthContext = createContext<Auth>();
 

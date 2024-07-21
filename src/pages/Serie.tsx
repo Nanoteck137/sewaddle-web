@@ -7,6 +7,7 @@ import {
 import { HiSolidCheck } from "solid-icons/hi";
 import { Component, For, Match, Show, Switch, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
+import { useAuth } from "../context/AuthContext";
 import {
   PostUserMarkChaptersBody,
   PostUserUnmarkChaptersBody,
@@ -30,7 +31,7 @@ const ChapterItem: Component<ChapterItemProps> = (props) => {
         <p
           class={`w-14 text-right font-mono ${props.read ? "text-green-600" : ""}`}
         >
-          {props.number}
+          {props.number}.
         </p>
         <div class="flex flex-col">
           <p
@@ -61,6 +62,9 @@ const Serie = () => {
 
   const apiClient = useApiClient();
 
+  const auth = useAuth();
+  const user = auth.user();
+
   const serie = createQuery(() => ({
     queryKey: ["series", params.id],
     queryFn: async () => {
@@ -75,6 +79,7 @@ const Serie = () => {
   const chapters = createQuery(() => ({
     queryKey: ["series", params.id, "chapters"],
     queryFn: async () => {
+      user();
       const res = await apiClient.getSerieChapters(params.id);
       if (res.status === "error") throw new Error(res.error.message);
       return res.data;
