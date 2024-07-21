@@ -58,6 +58,14 @@ const View = () => {
         serieId: data.serieId,
         chapters: [data.chapterNumber],
       }),
+
+    onError: () => {
+      toast.error("Failed to mark chapter read");
+    },
+
+    onSuccess: () => {
+      toast.success("Marked chapter read");
+    },
   }));
 
   const updateBookmark = createMutation(() => ({
@@ -101,13 +109,6 @@ const View = () => {
     const isLastPage = page === chapter.data.pages.length - 1;
 
     if (isLastPage) {
-      if (!!user()) {
-        markChapter.mutate({
-          serieId: chapter.data.serieId,
-          chapterNumber: chapter.data.number,
-        });
-      }
-
       if (showLastChapter()) {
         navigate(
           `/view/${chapter.data?.serieId}/${chapter.data?.nextChapter}`,
@@ -115,6 +116,13 @@ const View = () => {
         setShowLastChapter(false);
       } else {
         setShowLastChapter(true);
+
+        if (!!user()) {
+          markChapter.mutate({
+            serieId: chapter.data.serieId,
+            chapterNumber: chapter.data.number,
+          });
+        }
       }
     } else {
       if (nextPage < chapter.data.pages.length) {
