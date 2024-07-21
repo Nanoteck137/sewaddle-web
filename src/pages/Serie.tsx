@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "@solidjs/router";
+import { useParams } from "@solidjs/router";
 import {
   createMutation,
   createQuery,
@@ -12,8 +12,6 @@ import {
   PostUserMarkChaptersBody,
   PostUserUnmarkChaptersBody,
 } from "../lib/models/apiGen";
-
-//
 
 type ChapterItemProps = {
   number: string;
@@ -114,8 +112,6 @@ const Serie = () => {
     },
   }));
 
-  const navigate = useNavigate();
-
   const [selectedItems, setSelectedItems] = createSignal<number[]>([]);
 
   const isSelected = (chapterNumber: number) => {
@@ -125,12 +121,6 @@ const Serie = () => {
   const showSelectionMenu = () => {
     return selectedItems().length > 0;
   };
-
-  const [scrollIndex, setScrollIndex] = createSignal(10);
-  const scrollNext = () =>
-    setScrollIndex(
-      Math.min(scrollIndex() + 50, chapters.data?.chapters.length || 0),
-    );
 
   return (
     <>
@@ -247,92 +237,6 @@ const Serie = () => {
                   );
                 }}
               </For>
-
-              {/* <InfiniteScroll
-                each={chapters.data?.chapters.slice(0, scrollIndex())}
-                hasMore={scrollIndex() < (chapters.data?.chapters.length || 0)}
-                next={scrollNext}
-              >
-                {(chapter, i) => {
-                  return (
-                    <div class="flex items-center justify-between border-b">
-                      <div
-                        class="group flex cursor-pointer gap-2 py-1"
-                        onClick={() => {
-                          navigate(
-                            `/view/${chapter.serieId}/${chapter.number}`,
-                          );
-                        }}
-                      >
-                        <p class="w-14 text-right font-mono">
-                          {chapter.number}.
-                        </p>
-                        <img
-                          class="h-16 w-12 rounded border object-cover"
-                          src={chapter.coverArt}
-                          alt="Chapter Cover Art"
-                        />
-                        <div class="flex flex-col">
-                          <p class="group-hover:underline">{chapter.title}</p>
-                          {chapter.user && chapter.user.isMarked && (
-                            <p class="text-sm text-gray-500">Read</p>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <button
-                          class="flex h-6 w-6 items-center justify-center bg-red-300"
-                          onClick={(e) => {
-                            if (!chapters.data) return;
-
-                            if (e.shiftKey) {
-                              const firstSelected = selectedItems()[0];
-                              let first = chapters.data.chapters.findIndex(
-                                (i) => i.number === firstSelected,
-                              );
-
-                              let last = i();
-                              if (first > last) {
-                                const tmp = last;
-                                last = first;
-                                first = tmp;
-                              }
-
-                              const items = [];
-                              const numItems = last - first + 1;
-                              for (let i = 0; i < numItems; i++) {
-                                items.push(first + i);
-                              }
-
-                              const ids = items.map(
-                                (i) => chapters.data.chapters[i].number,
-                              );
-                              setSelectedItems(ids);
-                            } else {
-                              if (isSelected(chapter.number)) {
-                                setSelectedItems((prev) => [
-                                  ...prev.filter(
-                                    (num) => num !== chapter.number,
-                                  ),
-                                ]);
-                              } else {
-                                setSelectedItems((prev) => [
-                                  ...prev,
-                                  chapter.number,
-                                ]);
-                              }
-                            }
-                          }}
-                        >
-                          <Show when={isSelected(chapter.number)}>
-                            <HiSolidCheck class="h-6 w-6" />
-                          </Show>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                }}
-              </InfiniteScroll> */}
             </div>
             <Show when={showSelectionMenu()}>
               <div class="fixed bottom-8 left-1/2 h-10 w-64 -translate-x-1/2 bg-red-200">
