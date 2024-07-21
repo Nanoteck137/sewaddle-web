@@ -5,13 +5,56 @@ import {
   useQueryClient,
 } from "@tanstack/solid-query";
 import { HiSolidCheck } from "solid-icons/hi";
-import InfiniteScroll from "solid-infinite-scroll";
-import { Match, Show, Switch, createSignal } from "solid-js";
+import { Component, For, Match, Show, Switch, createSignal } from "solid-js";
 import { useApiClient } from "../context/ApiClientContext";
 import {
   PostUserMarkChaptersBody,
   PostUserUnmarkChaptersBody,
 } from "../lib/models/apiGen";
+
+//
+
+type ChapterItemProps = {
+  number: string;
+  title: string;
+  read?: boolean;
+
+  showCheckMark: boolean;
+  onSelectClicked: (shiftKey: boolean) => void;
+};
+
+const ChapterItem: Component<ChapterItemProps> = (props) => {
+  return (
+    <div class="flex items-center justify-between border-b pr-4">
+      <div class="group flex cursor-pointer gap-2 py-1">
+        <p
+          class={`w-14 text-right font-mono ${props.read ? "text-green-600" : ""}`}
+        >
+          {props.number}
+        </p>
+        <div class="flex flex-col">
+          <p
+            class={`group-hover:underline ${props.read ? "text-green-600" : ""}`}
+          >
+            {props.title}
+          </p>
+        </div>
+      </div>
+      <div>
+        <button
+          class="flex h-6 w-6 items-center justify-center bg-red-300"
+          onClick={(e) => {
+            props.onSelectClicked(e.shiftKey);
+          }}
+        >
+          <Show when={props.showCheckMark}>
+            <HiSolidCheck class="h-6 w-6" />
+          </Show>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const Serie = () => {
   const params = useParams<{ id: string }>();
@@ -125,7 +168,82 @@ const Serie = () => {
             </Show>
 
             <div class="flex flex-col gap-2">
-              <InfiniteScroll
+              <ChapterItem
+                number="Num"
+                title="Title"
+                showCheckMark={
+                  selectedItems().length >= chapters.data?.chapters.length!
+                }
+                onSelectClicked={() => {
+                  if (!chapters.data) return;
+
+                  const ids = chapters.data.chapters.map(
+                    (chapter) => chapter.number,
+                  );
+
+                  setSelectedItems((prev) => {
+                    if (prev.length >= ids.length) {
+                      return [];
+                    } else {
+                      return ids;
+                    }
+                  });
+                }}
+              />
+
+              <For each={chapters.data?.chapters}>
+                {(chapter, i) => {
+                  return (
+                    <ChapterItem
+                      number={chapter.number.toString()}
+                      title={chapter.title}
+                      read={chapter.user?.isMarked}
+                      showCheckMark={isSelected(chapter.number)}
+                      onSelectClicked={(shiftKey) => {
+                        if (!chapters.data) return;
+
+                        if (shiftKey) {
+                          const firstSelected = selectedItems()[0];
+                          let first = chapters.data.chapters.findIndex(
+                            (i) => i.number === firstSelected,
+                          );
+
+                          let last = i();
+                          if (first > last) {
+                            const tmp = last;
+                            last = first;
+                            first = tmp;
+                          }
+
+                          const items = [];
+                          const numItems = last - first + 1;
+                          for (let i = 0; i < numItems; i++) {
+                            items.push(first + i);
+                          }
+
+                          const ids = items.map(
+                            (i) => chapters.data.chapters[i].number,
+                          );
+                          setSelectedItems(ids);
+                        } else {
+                          if (isSelected(chapter.number)) {
+                            setSelectedItems((prev) => [
+                              ...prev.filter((num) => num !== chapter.number),
+                            ]);
+                          } else {
+                            setSelectedItems((prev) => [
+                              ...prev,
+                              chapter.number,
+                            ]);
+                          }
+                        }
+                      }}
+                    />
+                  );
+                }}
+              </For>
+
+              {/* <InfiniteScroll
                 each={chapters.data?.chapters.slice(0, scrollIndex())}
                 hasMore={scrollIndex() < (chapters.data?.chapters.length || 0)}
                 next={scrollNext}
@@ -209,7 +327,7 @@ const Serie = () => {
                     </div>
                   );
                 }}
-              </InfiniteScroll>
+              </InfiniteScroll> */}
             </div>
             <Show when={showSelectionMenu()}>
               <div class="fixed bottom-8 left-1/2 h-10 w-64 -translate-x-1/2 bg-red-200">
