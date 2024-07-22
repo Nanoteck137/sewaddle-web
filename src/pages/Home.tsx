@@ -29,7 +29,7 @@ const Home = () => {
                 return (
                   <div class="flex h-full w-full items-center justify-center">
                     <a
-                      class="group flex w-[300px] cursor-pointer flex-col items-center justify-center overflow-clip rounded-xl shadow hover:shadow-md active:scale-95"
+                      class="group flex w-[300px] cursor-pointer flex-col items-center justify-center overflow-clip rounded-xl border shadow hover:shadow-md active:scale-95"
                       href={`/serie/${serie.id}`}
                     >
                       <img
@@ -37,7 +37,7 @@ const Home = () => {
                         src={serie.cover}
                         alt="Cover Art"
                       />
-                      <p class="flex h-full w-full items-center justify-center border-t bg-white py-2 text-center group-hover:bg-gray-100">
+                      <p class="flex h-full w-full items-center justify-center border-t py-2 text-center group-hover:bg-gray-100">
                         {serie.name}
                       </p>
                     </a>
