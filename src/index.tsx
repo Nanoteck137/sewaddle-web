@@ -2,7 +2,11 @@
 import { render } from "solid-js/web";
 
 import { Route, Router } from "@solidjs/router";
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  createMutation,
+} from "@tanstack/solid-query";
 import {
   HiSolidBars3,
   HiSolidHome,
@@ -19,7 +23,7 @@ import {
   createSignal,
   onMount,
 } from "solid-js";
-import { Toaster } from "solid-toast";
+import toast, { Toaster } from "solid-toast";
 import { ApiClientProvider, useApiClient } from "./context/ApiClientContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import "./index.css";
@@ -51,8 +55,17 @@ const apiClient = new ApiClient(apiBaseUrl);
 const auth = new Auth(apiClient);
 
 const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
+  const apiClient = useApiClient();
+
   const auth = useAuth();
   const user = auth.user();
+
+  const syncLibrary = createMutation(() => ({
+    mutationFn: () => apiClient.runLibrarySync(),
+    onSuccess: () => {
+      toast.success("Running Library Sync");
+    },
+  }));
 
   const [showSide, setShowSide] = createSignal(false);
 
@@ -105,6 +118,16 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
               <HiSolidHome class="h-10 w-10 text-white" />
               <p class="text-2xl text-white">Home</p>
             </a>
+
+            <Show when={!!user()}>
+              <button
+                class="flex items-center gap-2 px-2"
+                onClick={() => syncLibrary.mutate()}
+              >
+                <HiSolidUser class="h-10 w-10 text-white" />
+                <p class="text-2xl text-white">Run Sync</p>
+              </button>
+            </Show>
 
             <Show when={!!user()}>
               <button class="flex items-center gap-2 px-2">
