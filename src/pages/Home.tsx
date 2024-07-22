@@ -29,15 +29,15 @@ const Home = () => {
                 return (
                   <div class="flex h-full w-full items-center justify-center">
                     <a
-                      class="flex w-[300px] cursor-pointer flex-col items-center justify-center overflow-clip rounded-xl shadow hover:shadow-md"
+                      class="group flex w-[300px] cursor-pointer flex-col items-center justify-center overflow-clip rounded-xl shadow hover:shadow-md"
                       href={`/serie/${serie.id}`}
                     >
                       <img
-                        class="h-[420px] w-full object-cover"
+                        class="h-[420px] w-full object-cover group-hover:brightness-90"
                         src={serie.cover}
                         alt="Cover Art"
                       />
-                      <p class="flex h-full w-full items-center justify-center border-t bg-white py-2 text-center">
+                      <p class="flex h-full w-full items-center justify-center border-t bg-white py-2 text-center group-hover:bg-gray-100">
                         {serie.name}
                       </p>
                     </a>
