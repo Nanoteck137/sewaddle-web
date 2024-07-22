@@ -83,7 +83,7 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
 
   return (
     <>
-      <header class="fixed flex h-16 w-full items-center gap-4 bg-gradient-to-tr from-purple-600 to-blue-500 px-4 py-2">
+      <header class="fixed z-50 flex h-16 w-full items-center gap-4 bg-gradient-to-tr from-purple-600 to-blue-500 px-4 py-2">
         <button
           class="text-white"
           onClick={() => setShowSide((prev) => !prev)}
