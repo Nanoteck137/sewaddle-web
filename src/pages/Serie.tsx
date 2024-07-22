@@ -16,6 +16,7 @@ import {
 type ChapterItemProps = {
   number: string;
   title: string;
+  url?: string;
   read?: boolean;
 
   showCheckMark: boolean;
@@ -32,11 +33,14 @@ const ChapterItem: Component<ChapterItemProps> = (props) => {
           {props.number}.
         </p>
         <div class="flex flex-col">
-          <p
-            class={`group-hover:underline ${props.read ? "text-green-600" : ""}`}
-          >
-            {props.title}
-          </p>
+          <Show when={props.url} fallback={<p>{props.title}</p>}>
+            <a
+              class={`group-hover:underline ${props.read ? "text-green-600" : ""}`}
+              href={props.url}
+            >
+              {props.title}
+            </a>
+          </Show>
         </div>
       </div>
       <div>
@@ -192,6 +196,7 @@ const Serie = () => {
                     <ChapterItem
                       number={chapter.number.toString()}
                       title={chapter.title}
+                      url={`/view/${chapter.serieId}/${chapter.number}`}
                       read={chapter.user?.isMarked}
                       showCheckMark={isSelected(chapter.number)}
                       onSelectClicked={(shiftKey) => {
