@@ -14,6 +14,8 @@ const Home = () => {
     },
   }));
 
+  // <a href={`/serie/${serie.id}`}>{serie.name}</a>
+
   return (
     <>
       <Switch>
@@ -21,10 +23,26 @@ const Home = () => {
           <p>Loading...</p>
         </Match>
         <Match when={series.isSuccess}>
-          <div class="flex flex-col">
+          <div class="grid gap-2 p-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             <For each={series.data?.series}>
               {(serie) => {
-                return <a href={`/serie/${serie.id}`}>{serie.name}</a>;
+                return (
+                  <div class="flex h-full w-full items-center justify-center">
+                    <a
+                      class="flex w-[300px] cursor-pointer flex-col items-center justify-center overflow-clip rounded-xl shadow hover:shadow-md"
+                      href={`/serie/${serie.id}`}
+                    >
+                      <img
+                        class="h-[420px] w-full object-cover"
+                        src={serie.cover}
+                        alt="Cover Art"
+                      />
+                      <p class="flex h-full w-full items-center justify-center border-t bg-white py-2 text-center">
+                        {serie.name}
+                      </p>
+                    </a>
+                  </div>
+                );
               }}
             </For>
           </div>
