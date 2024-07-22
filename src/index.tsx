@@ -83,7 +83,7 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
 
   return (
     <>
-      <header class="fixed z-50 flex h-16 w-full items-center gap-4 bg-gradient-to-tr from-purple-600 to-blue-500 px-4 py-2">
+      <header class="fixed z-40 flex h-16 w-full items-center gap-4 bg-gradient-to-tr from-purple-600 to-blue-500 px-4 py-2">
         <button
           class="text-white"
           onClick={() => setShowSide((prev) => !prev)}
@@ -101,13 +101,13 @@ const DefaultLayout: Component<{ children?: JSX.Element }> = (props) => {
           return <p class="text-red-700">Error: {e.message}</p>;
         }}
       >
-        <div class={`${showSide() ? "block" : "hidden"}`}>
+        <div class={` ${showSide() ? "block" : "hidden"}`}>
           <div
-            class="fixed inset-0 overflow-auto bg-black/80"
+            class="fixed inset-0 z-50 overflow-auto bg-black/80"
             onClick={close}
           ></div>
 
-          <aside class="fixed bottom-0 top-0 w-72 bg-gradient-to-b from-purple-600 to-blue-500">
+          <aside class="fixed bottom-0 top-0 z-50 w-72 bg-gradient-to-b from-purple-600 to-blue-500">
             <div class="flex items-center justify-end p-2">
               <button onClick={close}>
                 <HiSolidXMark class="h-10 w-10 text-white" />
