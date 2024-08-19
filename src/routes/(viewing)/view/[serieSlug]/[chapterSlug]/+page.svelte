@@ -1,56 +1,117 @@
 <script lang="ts">
+  import Modal from "$lib/components/Modal.svelte";
+  import {
+    ArrowBigLeft,
+    CircleEllipsis,
+    GalleryHorizontal,
+    GalleryVertical,
+    StepBack,
+    StepForward,
+  } from "lucide-svelte";
+
   const { data } = $props();
+
+  let sideMenuOpen = $state(false);
 </script>
 
-<p>View Chapter (W.I.P) {data.layout}</p>
-
-<div>
-  <a href={`?page=${data.page + 1}`}>Next Page</a>
-  <a href={`?page=${data.page - 1}`}>Prev Page</a>
-</div>
-
 {#if data.layout === "paged"}
-  <a href={`?page=${data.page}&layout=scroll`}>Scroll Layout</a>
-{:else}
-  <a href={`?page=${data.page}&layout=paged`}>Paged Layout</a>
-{/if}
-
-<div>
-  {#if data.chapter.nextChapter}
-    <a
-      href={`/view/${data.chapter.serieSlug}/${data.chapter.nextChapter}?layout=${data.layout}`}
-      >Next Chapter</a
-    >
-  {/if}
-
-  {#if data.chapter.prevChapter}
-    <a
-      href={`/view/${data.chapter.serieSlug}/${data.chapter.prevChapter}?page=last&layout=${data.layout}`}
-      >Prev Chapter</a
-    >
-  {/if}
-</div>
-
-{#if data.layout === "paged"}
-  <img src={data.chapter.pages[data.page]} alt={`Page ${data.page + 1}`} />
-{:else}
-  <div class="flex flex-col">
-    {#if data.chapter.prevChapter}
+  <div class="flex h-screen w-full items-center justify-center py-2">
+    {#if !data.isFirstPage}
+      <!-- svelte-ignore a11y_missing_content -->
       <a
-        href={`/view/${data.chapter.serieSlug}/${data.chapter.prevChapter}?page=last&layout=${data.layout}`}
-        >Prev Chapter</a
-      >
+        class="absolute left-0 h-full w-1/2 cursor-w-resize"
+        href={`?page=${data.page - 1}&layout=${data.layout}`}
+      ></a>
+    {/if}
+    {#if !data.isLastPage}
+      <!-- svelte-ignore a11y_missing_content -->
+      <a
+        class="absolute right-0 h-full w-1/2 cursor-e-resize"
+        href={`?page=${data.page + 1}&layout=${data.layout}`}
+      ></a>
     {/if}
 
+    <img
+      class="max-h-full border-2 object-scale-down"
+      src={data.chapter.pages[data.page]}
+      alt="Page"
+    />
+  </div>
+{:else}
+  <div class="flex justify-center py-20">
+    <p class="cursor-pointer text-3xl">Previous Chapter</p>
+  </div>
+  <div class="flex flex-col items-center">
     {#each data.chapter.pages as page, i}
-      <img id={`page-${i}`} src={page} alt={`Page ${i + 1}`} />
+      <div id={`page-${i}`} class="flex max-w-[500px] justify-center">
+        <img class="border" src={page} alt={`Page ${i}`} />
+      </div>
     {/each}
-
-    {#if data.chapter.nextChapter}
-      <a
-        href={`/view/${data.chapter.serieSlug}/${data.chapter.nextChapter}?layout=${data.layout}`}
-        >Next Chapter</a
-      >
-    {/if}
+  </div>
+  <div class="flex justify-center py-20">
+    <p class="cursor-pointer text-3xl">Next Chapter</p>
   </div>
 {/if}
+
+<button
+  class="fixed bottom-10 left-10 flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/60 text-white"
+  onclick={() => {
+    sideMenuOpen = true;
+  }}
+>
+  <CircleEllipsis size="30" />
+</button>
+
+<!-- <button class="fixed inset-0 bg-black/70"></button>
+<div class="fixed bottom-0 left-0 top-0 w-52 bg-red-400/90">
+  <button></button>
+</div> -->
+
+{#snippet menuButton(text: string, icon: any, href?: string)}
+  <svelte:element
+    this={href ? "a" : "button"}
+    {href}
+    class="jusitfy-center flex items-center"
+  >
+    <svelte:component this={icon} size="30" />
+    <p class="text-lg">
+      {text}
+    </p>
+  </svelte:element>
+{/snippet}
+
+<Modal
+  open={sideMenuOpen}
+  onClose={() => {
+    sideMenuOpen = false;
+  }}
+>
+  <div class="flex h-full w-full flex-col justify-center bg-blue-400 p-4">
+    <p>{data.chapter.title}</p>
+
+    <!-- {@render menuButton("Next Page", ChevronRight)}
+    {@render menuButton("Previous Page", ChevronLeft)} -->
+    {@render menuButton("First Page", StepBack)}
+    {@render menuButton("Last Page", StepForward)}
+
+    {#if data.layout === "paged"}
+      {@render menuButton(
+        "Scroll Layout",
+        GalleryHorizontal,
+        `?page=${data.page}&layout=scroll`,
+      )}
+    {:else}
+      {@render menuButton(
+        "Paged Layout",
+        GalleryVertical,
+        `?page=${data.page}&layout=paged`,
+      )}
+    {/if}
+
+    {@render menuButton(
+      "Go back",
+      ArrowBigLeft,
+      `/series/${data.chapter.serieSlug}`,
+    )}
+  </div>
+</Modal>

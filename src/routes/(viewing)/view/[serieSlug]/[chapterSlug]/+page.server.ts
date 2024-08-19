@@ -36,9 +36,14 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
     }
   }
 
+  const isFirstPage = pageNum <= 0;
+  const isLastPage = pageNum >= chapter.data.pages.length - 1;
+
   return {
-    page: pageNum,
     chapter: chapter.data,
+    page: pageNum,
+    isFirstPage,
+    isLastPage,
     layout,
   };
 };
