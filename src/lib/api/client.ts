@@ -1,69 +1,129 @@
 import { z } from "zod";
 import * as api from "./types";
-import BaseApiClient from "./base-client";
+import { BaseApiClient, createError, type ExtraOptions } from "./base-client";
 
 export class ApiClient extends BaseApiClient {
   constructor(baseUrl: string) {
     super(baseUrl);
   }
   
-  getSeries() {
-    return this.request("/api/v1/series", "GET", api.GetSeries)
+  getSeries(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/series", "GET", api.GetSeries, error, undefined, options)
   }
   
-  getSerieById(id: string) {
-    return this.request(`/api/v1/series/${id}`, "GET", api.GetSerieById)
+  getSerieById(id: string, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR", "SERIE_NOT_FOUND"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request(`/api/v1/series/${id}`, "GET", api.GetSerieById, error, undefined, options)
   }
   
-  getSerieChapters(id: string) {
-    return this.request(`/api/v1/series/${id}/chapters`, "GET", api.GetSerieChaptersById)
+  getSerieChapters(id: string, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request(`/api/v1/series/${id}/chapters`, "GET", api.GetSerieChaptersById, error, undefined, options)
   }
   
-  getChapters() {
-    return this.request("/api/v1/chapters", "GET", api.GetChapters)
+  getChapters(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/chapters", "GET", api.GetChapters, error, undefined, options)
   }
   
-  getChapterById(serieId: string, chapterNumber: string) {
-    return this.request(`/api/v1/chapters/${serieId}/${chapterNumber}`, "GET", api.GetChapterById)
+  getChapterById(serieId: string, slug: string, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request(`/api/v1/chapters/${serieId}/${slug}`, "GET", api.GetChapterById, error, undefined, options)
   }
   
-  getLibraryStatus() {
-    return this.request("/api/v1/library/status", "GET", api.GetLibraryStatus)
+  getLibraryStatus(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/library/status", "GET", api.GetLibraryStatus, error, undefined, options)
   }
   
-  runLibrarySync() {
-    return this.request("/api/v1/library/sync", "POST", z.undefined())
+  runLibrarySync(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/library/sync", "POST", z.undefined(), error, undefined, options)
   }
   
-  markChapters(body: api.PostUserMarkChaptersBody) {
-    return this.request("/api/v1/user/markChapters", "POST", z.undefined(), body)
+  markChapters(body: api.PostUserMarkChaptersBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/user/markChapters", "POST", z.undefined(), error, body, options)
   }
   
-  unmarkChapters(body: api.PostUserUnmarkChaptersBody) {
-    return this.request("/api/v1/user/unmarkChapters", "POST", z.undefined(), body)
+  unmarkChapters(body: api.PostUserUnmarkChaptersBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/user/unmarkChapters", "POST", z.undefined(), error, body, options)
   }
   
-  updateBookmark(body: api.PostUserUpdateBookmarkBody) {
-    return this.request("/api/v1/user/updateBookmark", "POST", z.undefined(), body)
+  updateBookmark(body: api.PostUserUpdateBookmarkBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/user/updateBookmark", "POST", z.undefined(), error, body, options)
   }
   
-  getSystemInfo() {
-    return this.request("/api/v1/system/info", "GET", api.GetSystemInfo)
+  getSystemInfo(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/system/info", "GET", api.GetSystemInfo, error, undefined, options)
   }
   
-  runSystemSetup(body: api.PostSystemSetupBody) {
-    return this.request("/api/v1/system/setup", "POST", z.undefined(), body)
+  runSystemSetup(body: api.PostSystemSetupBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/system/setup", "POST", z.undefined(), error, body, options)
   }
   
-  signup(body: api.PostAuthSignupBody) {
-    return this.request("/api/v1/auth/signup", "POST", api.PostAuthSignup, body)
+  signup(body: api.PostAuthSignupBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/auth/signup", "POST", api.PostAuthSignup, error, body, options)
   }
   
-  signin(body: api.PostAuthSigninBody) {
-    return this.request("/api/v1/auth/signin", "POST", api.PostAuthSignin, body)
+  signin(body: api.PostAuthSigninBody, options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/auth/signin", "POST", api.PostAuthSignin, error, body, options)
   }
   
-  getMe() {
-    return this.request("/api/v1/auth/me", "GET", api.GetAuthMe)
+  getMe(options?: ExtraOptions) {
+    const error = createError(
+      z.enum(["UNKNOWN_ERROR"]),
+      z.map(z.string(), z.string()).optional(),
+    )
+    return this.request("/api/v1/auth/me", "GET", api.GetAuthMe, error, undefined, options)
   }
 }

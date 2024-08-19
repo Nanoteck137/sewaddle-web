@@ -1,5 +1,38 @@
-## Usage
+# create-svelte
 
-- [IconKitchen](https://icon.kitchen)
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-- [Icon](https://icon.kitchen/i/H4sIAAAAAAAAAzWPvQ7CMAyE38WsDID4U1eEWJHohhjSxEkj0rpKUwqq%2Bu7YkZoh8n2xz5cJPioM2EMxgVHxXdbYIBQpDrgG68pfxwoSfhNkLUUBDxbV8uiiMh5baajcbRHspylQ3HLH6ng%2BaTxxQ0Y7QYf91uKGkWpdYJv9YZb5R62yqfZRM5adF5mREZtPZldrUSdODX2tDI0Z3pUxvnWyOlEHxXkN0buas3BVUUrU5DKgFTbzwobMEOT3T85hInnDTp56vkes4DX%2FAatOd2kgAQAA)
+## Creating a project
+
+If you're seeing this, you've probably already done this step. Congrats!
+
+```bash
+# create a new project in the current directory
+npm create svelte@latest
+
+# create a new project in my-app
+npm create svelte@latest my-app
+```
+
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
