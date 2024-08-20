@@ -1,10 +1,17 @@
 import { error, redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 
 type Layout = "paged" | "scroll";
 
+function parseQueryBool(q: string | null) {
+  return q === "true";
+}
+
 export const load: PageServerLoad = async ({ params, locals, url }) => {
   const layoutParam = url.searchParams.get("layout");
+  const showLastPageModal = parseQueryBool(
+    url.searchParams.get("showLastPageModal"),
+  );
 
   let layout: Layout = "paged";
   if (layoutParam === "scroll") {
@@ -45,5 +52,37 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
     isFirstPage,
     isLastPage,
     layout,
+    showLastPageModal,
   };
+};
+
+export const actions: Actions = {
+  updateAndNextChapter: async ({ locals, request }) => {
+    const formData = await request.formData();
+    const serieSlug = formData.get("serieSlug");
+    if (!serieSlug) {
+      throw error(500, "Missing 'serieSlug'");
+    }
+
+    const currentChapterSlug = formData.get("currentChapterSlug");
+    if (!currentChapterSlug) {
+      throw error(500, "Missing 'currentChapterSlug'");
+    }
+
+    const nextChapterSlug = formData.get("nextChapterSlug");
+    if (!nextChapterSlug) {
+      throw error(500, "Missing 'nextChapterSlug'");
+    }
+
+    const res = await locals.apiClient.markChapters({
+      serieSlug: serieSlug.toString(),
+      chapters: [currentChapterSlug.toString()],
+    });
+
+    if (!res.success) {
+      throw error(res.error.code, { message: res.error.message });
+    }
+
+    throw redirect(301, `/view/${serieSlug}/${nextChapterSlug}`);
+  },
 };

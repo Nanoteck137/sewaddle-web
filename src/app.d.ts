@@ -1,6 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 
 import type { ApiClient } from "$lib/api/client";
+import type { GetAuthMe } from "$lib/api/types";
 
 // for information about these interfaces
 declare global {
@@ -8,6 +9,7 @@ declare global {
     // interface Error {}
     interface Locals {
       apiClient: ApiClient;
+      user?: GetAuthMe;
     }
     // interface PageData {}
     // interface PageState {}

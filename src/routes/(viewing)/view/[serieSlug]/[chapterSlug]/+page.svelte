@@ -29,6 +29,12 @@
         class="absolute right-0 h-full w-1/2 cursor-e-resize"
         href={`?page=${data.page + 1}&layout=${data.layout}`}
       ></a>
+    {:else}
+      <!-- svelte-ignore a11y_missing_content -->
+      <a
+        class="absolute right-0 h-full w-1/2 cursor-e-resize"
+        href={`?page=${data.page}&layout=${data.layout}&showLastPageModal=true`}
+      ></a>
     {/if}
 
     <img
@@ -39,7 +45,13 @@
   </div>
 {:else}
   <div class="flex justify-center py-20">
-    <p class="cursor-pointer text-3xl">Previous Chapter</p>
+    {#if data.chapter.prevChapter}
+      <a
+        class="text-3xl"
+        href={`/view/${data.chapter.serieSlug}/${data.chapter.prevChapter}?layout=${data.layout}`}
+        >Previous Chapter</a
+      >
+    {/if}
   </div>
   <div class="flex flex-col items-center">
     {#each data.chapter.pages as page, i}
@@ -49,7 +61,13 @@
     {/each}
   </div>
   <div class="flex justify-center py-20">
-    <p class="cursor-pointer text-3xl">Next Chapter</p>
+    {#if data.chapter.nextChapter}
+      <a
+        class="text-3xl"
+        href={`/view/${data.chapter.serieSlug}/${data.chapter.nextChapter}?layout=${data.layout}`}
+        >Next Chapter</a
+      >
+    {/if}
   </div>
 {/if}
 
@@ -115,3 +133,29 @@
     )}
   </div>
 </Modal>
+
+{#if data.showLastPageModal}
+  <div class="fixed inset-0 bg-black/80"></div>
+  <div
+    class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-400"
+  >
+    <p>Last Page</p>
+    <a href={`?page=${data.page}&layout=${data.layout}`}>Close</a>
+    {#if data.chapter.nextChapter}
+      <form action="?/updateAndNextChapter" method="post">
+        <input name="serieSlug" value={data.chapter.serieSlug} type="hidden" />
+        <input
+          name="currentChapterSlug"
+          value={data.chapter.slug}
+          type="hidden"
+        />
+        <input
+          name="nextChapterSlug"
+          value={data.chapter.nextChapter}
+          type="hidden"
+        />
+        <button>Next Chapter</button>
+      </form>
+    {/if}
+  </div>
+{/if}

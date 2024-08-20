@@ -89,7 +89,7 @@ export type PostUserUnmarkChaptersBody = z.infer<typeof PostUserUnmarkChaptersBo
 
 export const PostUserUpdateBookmarkBody = z.object({
   serieSlug: z.string(),
-  chapter: z.number(),
+  chapterSlug: z.string(),
   page: z.number(),
 });
 export type PostUserUpdateBookmarkBody = z.infer<typeof PostUserUpdateBookmarkBody>;

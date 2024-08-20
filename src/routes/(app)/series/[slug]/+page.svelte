@@ -8,6 +8,8 @@
 
 <div class="flex flex-col">
   {#each data.chapters as chapter}
-    <a href={`/view/${data.serie.slug}/${chapter.slug}`}>{chapter.title}</a>
+    <a href={`/view/${data.serie.slug}/${chapter.slug}`}
+      >{chapter.title} - {chapter.user?.isMarked}</a
+    >
   {/each}
 </div>
