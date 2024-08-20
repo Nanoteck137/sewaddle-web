@@ -74,6 +74,11 @@ export const actions: Actions = {
       throw error(500, "Missing 'nextChapterSlug'");
     }
 
+    const layout = formData.get("layout");
+    if (!layout) {
+      throw error(500, "Missing 'layout'");
+    }
+
     const res = await locals.apiClient.markChapters({
       serieSlug: serieSlug.toString(),
       chapters: [currentChapterSlug.toString()],
@@ -83,6 +88,32 @@ export const actions: Actions = {
       throw error(res.error.code, { message: res.error.message });
     }
 
-    throw redirect(301, `/view/${serieSlug}/${nextChapterSlug}`);
+    throw redirect(
+      301,
+      `/view/${serieSlug}/${nextChapterSlug}?layout=${layout}`,
+    );
+  },
+
+  bookmarkChapter: async ({ locals, request }) => {
+    const formData = await request.formData();
+    const serieSlug = formData.get("serieSlug");
+    if (!serieSlug) {
+      throw error(500, "Missing 'serieSlug'");
+    }
+
+    const chapterSlug = formData.get("chapterSlug");
+    if (!chapterSlug) {
+      throw error(500, "Missing 'chapterSlug'");
+    }
+
+    const res = await locals.apiClient.updateBookmark({
+      serieSlug: serieSlug.toString(),
+      chapterSlug: chapterSlug.toString(),
+      page: 0,
+    });
+
+    if (!res.success) {
+      throw error(res.error.code, { message: res.error.message });
+    }
   },
 };

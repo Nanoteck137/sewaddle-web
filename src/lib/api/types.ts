@@ -15,7 +15,7 @@ export const GetSeries = z.object({
 export type GetSeries = z.infer<typeof GetSeries>;
 
 export const Bookmark = z.object({
-  chapterSlug: z.number(),
+  chapterSlug: z.string(),
   page: z.number(),
 });
 export type Bookmark = z.infer<typeof Bookmark>;

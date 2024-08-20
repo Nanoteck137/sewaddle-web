@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/private";
 import { ApiClient } from "$lib/api/client";
-import { redirect, type Handle } from "@sveltejs/kit";
+import { type Handle } from "@sveltejs/kit";
 
 const apiAddress = env.API_ADDRESS ? env.API_ADDRESS : "";
 
@@ -18,13 +18,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     const obj = JSON.parse(auth);
     client.setToken(obj.token);
 
-    const me = await client.getMe();
-    if (!me.success) {
-      event.cookies.delete("auth", { path: "/" });
-      throw redirect(301, "/");
-    }
-
-    event.locals.user = me.data;
+    event.locals.loggedIn = true;
   }
 
   event.locals.apiClient = client;
