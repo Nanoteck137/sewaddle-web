@@ -44,6 +44,54 @@ export const actions: Actions = {
     }
   },
 
+  markMultipleChapters: async ({ locals, request }) => {
+    if (!locals.loggedIn) throw error(400, "Not logged in");
+
+    const formData = await request.formData();
+
+    const serieSlug = formData.get("serieSlug");
+    if (!serieSlug) {
+      throw error(500, "'serieSlug' not set");
+    }
+
+    const chapters = formData.getAll("chapters[]");
+    if (chapters.length > 0) {
+      const chapterSlugs = chapters.map((c) => c.toString());
+      const res = await locals.apiClient.markChapters({
+        serieSlug: serieSlug.toString(),
+        chapters: chapterSlugs,
+      });
+
+      if (!res.success) {
+        throw error(res.error.code, { message: res.error.message });
+      }
+    }
+  },
+
+  unmarkMultipleChapters: async ({ locals, request }) => {
+    if (!locals.loggedIn) throw error(400, "Not logged in");
+
+    const formData = await request.formData();
+
+    const serieSlug = formData.get("serieSlug");
+    if (!serieSlug) {
+      throw error(500, "'serieSlug' not set");
+    }
+
+    const chapters = formData.getAll("chapters[]");
+    if (chapters.length > 0) {
+      const chapterSlugs = chapters.map((c) => c.toString());
+      const res = await locals.apiClient.unmarkChapters({
+        serieSlug: serieSlug.toString(),
+        chapters: chapterSlugs,
+      });
+
+      if (!res.success) {
+        throw error(res.error.code, { message: res.error.message });
+      }
+    }
+  },
+
   setBookmark: async ({ locals, request }) => {
     if (!locals.loggedIn) throw error(400, "Not logged in");
 
