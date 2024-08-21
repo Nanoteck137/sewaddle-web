@@ -19,32 +19,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 };
 
 export const actions: Actions = {
-  markChapter: async ({ locals, request }) => {
-    if (!locals.loggedIn) throw error(400, "Not logged in");
-
-    const formData = await request.formData();
-
-    const serieSlug = formData.get("serieSlug");
-    if (!serieSlug) {
-      throw error(500, "'serieSlug' not set");
-    }
-
-    const chapterSlug = formData.get("chapterSlug");
-    if (!chapterSlug) {
-      throw error(500, "'chapterSlug' not set");
-    }
-
-    const res = await locals.apiClient.markChapters({
-      serieSlug: serieSlug.toString(),
-      chapters: [chapterSlug.toString()],
-    });
-
-    if (!res.success) {
-      throw error(res.error.code, { message: res.error.message });
-    }
-  },
-
-  markMultipleChapters: async ({ locals, request }) => {
+  markChapters: async ({ locals, request }) => {
     if (!locals.loggedIn) throw error(400, "Not logged in");
 
     const formData = await request.formData();
@@ -68,7 +43,7 @@ export const actions: Actions = {
     }
   },
 
-  unmarkMultipleChapters: async ({ locals, request }) => {
+  unmarkChapters: async ({ locals, request }) => {
     if (!locals.loggedIn) throw error(400, "Not logged in");
 
     const formData = await request.formData();

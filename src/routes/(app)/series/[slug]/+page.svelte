@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { Chapter } from "$lib/api/types.js";
-  import { Bookmark, BookPlus, Check, EllipsisVertical } from "lucide-svelte";
+  import {
+    Bookmark,
+    BookMinus,
+    BookPlus,
+    Check,
+    EllipsisVertical,
+  } from "lucide-svelte";
 
   const { data } = $props();
 
@@ -89,18 +94,33 @@
             class={`popup absolute right-7 top-full z-50 -translate-y-4 rounded bg-red-400 ${showPopupMenu === chapter.slug ? "" : "hidden"}`}
           >
             <div class="flex flex-col">
-              <form action="?/markChapter" method="post">
+              <form action="?/markChapters" method="post">
                 <input
                   name="serieSlug"
                   value={data.serie.slug}
                   type="hidden"
                 />
-                <input name="chapterSlug" value={chapter.slug} type="hidden" />
+                <input name="chapters[]" value={chapter.slug} type="hidden" />
                 <button
                   class="flex w-full gap-1 rounded px-4 py-2 hover:bg-red-200"
                 >
                   <BookPlus />
                   <p>Mark as Read</p>
+                </button>
+              </form>
+
+              <form action="?/unmarkChapters" method="post">
+                <input
+                  name="serieSlug"
+                  value={data.serie.slug}
+                  type="hidden"
+                />
+                <input name="chapters[]" value={chapter.slug} type="hidden" />
+                <button
+                  class="flex w-full gap-1 rounded px-4 py-2 hover:bg-red-200"
+                >
+                  <BookMinus />
+                  <p>Mark as not Read</p>
                 </button>
               </form>
 
@@ -214,7 +234,7 @@
 
 {#if selectedChapters.length > 0}
   <div class="fixed bottom-0 left-1/2 bg-red-300 p-10">
-    <form action="?/markMultipleChapters" method="post">
+    <form action="?/markChapters" method="post">
       <input name="serieSlug" value={data.serie.slug} type="hidden" />
       {#each selectedChapters as chapter}
         <input name="chapters[]" value={chapter} type="hidden" />
@@ -223,7 +243,7 @@
       <button>Mark Chapters</button>
     </form>
 
-    <form action="?/unmarkMultipleChapters" method="post">
+    <form action="?/unmarkChapters" method="post">
       <input name="serieSlug" value={data.serie.slug} type="hidden" />
       {#each selectedChapters as chapter}
         <input name="chapters[]" value={chapter} type="hidden" />
