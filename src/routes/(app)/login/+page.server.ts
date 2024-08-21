@@ -33,7 +33,7 @@ export const actions: Actions = {
 
     cookies.set("auth", JSON.stringify(data), {
       path: "/",
-      sameSite: "strict",
+      secure: false,
     });
 
     throw redirect(302, "/");
