@@ -49,7 +49,7 @@
               src={chapter.coverArt}
               alt="Chapter Cover"
             />
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
               <a
                 class="line-clamp-1 font-medium"
                 title={chapter.title}
@@ -74,14 +74,6 @@
             <button
               class="flex h-6 w-6 items-center justify-center rounded border"
               onclick={() => {
-                // if (isSelected(chapter.slug)) {
-                //   selectedChapters = selectedChapters.filter(
-                //     (a) => a !== chapter.slug,
-                //   );
-                // } else {
-                //   selectedChapters.push(chapter.slug);
-                // }
-
                 selectedChapters.push(chapter.slug);
               }}
             >
@@ -186,7 +178,7 @@
               src={chapter.coverArt}
               alt="Chapter Cover"
             />
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
               <a
                 class="line-clamp-1 font-medium"
                 title={chapter.title}
