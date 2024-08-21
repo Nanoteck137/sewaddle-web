@@ -16,6 +16,7 @@
       />
       <div class="h-2"></div>
       <p class="line-clamp-2 text-center font-bold">{data.serie.name}</p>
+      <p>{data.serie.user?.bookmark?.chapterSlug}</p>
     </div>
   </div>
   <div class="md:ml-4 md:pl-[280px]">
@@ -57,15 +58,35 @@
             class={`popup absolute right-7 top-full z-50 -translate-y-4 rounded bg-red-400 ${showPopupMenu === chapter.slug ? "" : "hidden"}`}
           >
             <div class="flex flex-col">
-              <button class="flex gap-1 rounded px-4 py-2 hover:bg-red-200">
-                <BookPlus />
-                <p>Mark as Read</p>
-              </button>
+              <form action="?/markChapter" method="post">
+                <input
+                  name="serieSlug"
+                  value={data.serie.slug}
+                  type="hidden"
+                />
+                <input name="chapterSlug" value={chapter.slug} type="hidden" />
+                <button
+                  class="flex w-full gap-1 rounded px-4 py-2 hover:bg-red-200"
+                >
+                  <BookPlus />
+                  <p>Mark as Read</p>
+                </button>
+              </form>
 
-              <button class="flex gap-1 rounded px-4 py-2 hover:bg-red-200">
-                <Bookmark />
-                <p>Set as Bookmark</p>
-              </button>
+              <form action="?/setBookmark" method="post">
+                <input
+                  name="serieSlug"
+                  value={data.serie.slug}
+                  type="hidden"
+                />
+                <input name="chapterSlug" value={chapter.slug} type="hidden" />
+                <button
+                  class="flex w-full gap-1 rounded px-4 py-2 hover:bg-red-200"
+                >
+                  <Bookmark />
+                  <p>Set as Bookmark</p>
+                </button>
+              </form>
             </div>
           </div>
         </div>
