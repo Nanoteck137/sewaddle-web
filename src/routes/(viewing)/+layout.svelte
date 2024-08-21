@@ -3,3 +3,7 @@
 </script>
 
 <slot />
+
+<svelte:head>
+  <title>Sewaddle</title>
+</svelte:head>
