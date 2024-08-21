@@ -15,20 +15,20 @@ export class ApiClient extends BaseApiClient {
     return this.request("/api/v1/series", "GET", api.GetSeries, error, undefined, options)
   }
   
-  getSerieById(id: string, options?: ExtraOptions) {
+  getSerieById(slug: string, options?: ExtraOptions) {
     const error = createError(
       z.enum(["UNKNOWN_ERROR", "SERIE_NOT_FOUND"]),
       z.map(z.string(), z.string()).optional(),
     )
-    return this.request(`/api/v1/series/${id}`, "GET", api.GetSerieById, error, undefined, options)
+    return this.request(`/api/v1/series/${slug}`, "GET", api.GetSerieBySlug, error, undefined, options)
   }
   
-  getSerieChapters(id: string, options?: ExtraOptions) {
+  getSerieChapters(slug: string, options?: ExtraOptions) {
     const error = createError(
       z.enum(["UNKNOWN_ERROR"]),
       z.map(z.string(), z.string()).optional(),
     )
-    return this.request(`/api/v1/series/${id}/chapters`, "GET", api.GetSerieChaptersById, error, undefined, options)
+    return this.request(`/api/v1/series/${slug}/chapters`, "GET", api.GetSerieChaptersBySlug, error, undefined, options)
   }
   
   getChapters(options?: ExtraOptions) {
@@ -39,12 +39,12 @@ export class ApiClient extends BaseApiClient {
     return this.request("/api/v1/chapters", "GET", api.GetChapters, error, undefined, options)
   }
   
-  getChapterById(serieId: string, slug: string, options?: ExtraOptions) {
+  getChapterBySlug(serieSlug: string, slug: string, options?: ExtraOptions) {
     const error = createError(
       z.enum(["UNKNOWN_ERROR"]),
       z.map(z.string(), z.string()).optional(),
     )
-    return this.request(`/api/v1/chapters/${serieId}/${slug}`, "GET", api.GetChapterById, error, undefined, options)
+    return this.request(`/api/v1/chapters/${serieSlug}/${slug}`, "GET", api.GetChapterBySlug, error, undefined, options)
   }
   
   getLibraryStatus(options?: ExtraOptions) {

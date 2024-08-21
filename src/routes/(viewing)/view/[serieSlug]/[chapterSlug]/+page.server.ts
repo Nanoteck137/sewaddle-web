@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
     throw redirect(301, url.pathname + "?page=0");
   }
 
-  const chapter = await locals.apiClient.getChapterById(
+  const chapter = await locals.apiClient.getChapterBySlug(
     params.serieSlug,
     params.chapterSlug,
   );

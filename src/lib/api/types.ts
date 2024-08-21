@@ -16,7 +16,6 @@ export type GetSeries = z.infer<typeof GetSeries>;
 
 export const Bookmark = z.object({
   chapterSlug: z.string(),
-  page: z.number(),
 });
 export type Bookmark = z.infer<typeof Bookmark>;
 
@@ -25,14 +24,14 @@ export const SerieUserData = z.object({
 });
 export type SerieUserData = z.infer<typeof SerieUserData>;
 
-export const GetSerieById = z.object({
+export const GetSerieBySlug = z.object({
   slug: z.string(),
   name: z.string(),
   cover: z.string(),
   chapterCount: z.number(),
   user: SerieUserData.nullable().optional(),
 });
-export type GetSerieById = z.infer<typeof GetSerieById>;
+export type GetSerieBySlug = z.infer<typeof GetSerieBySlug>;
 
 export const ChapterUserData = z.object({
   isMarked: z.boolean(),
@@ -48,17 +47,17 @@ export const Chapter = z.object({
 });
 export type Chapter = z.infer<typeof Chapter>;
 
-export const GetSerieChaptersById = z.object({
+export const GetSerieChaptersBySlug = z.object({
   chapters: z.array(Chapter),
 });
-export type GetSerieChaptersById = z.infer<typeof GetSerieChaptersById>;
+export type GetSerieChaptersBySlug = z.infer<typeof GetSerieChaptersBySlug>;
 
 export const GetChapters = z.object({
   chapters: z.array(Chapter),
 });
 export type GetChapters = z.infer<typeof GetChapters>;
 
-export const GetChapterById = z.object({
+export const GetChapterBySlug = z.object({
   serieSlug: z.string(),
   slug: z.string(),
   title: z.string(),
@@ -68,7 +67,7 @@ export const GetChapterById = z.object({
   prevChapter: z.string().nullable(),
   pages: z.array(z.string()),
 });
-export type GetChapterById = z.infer<typeof GetChapterById>;
+export type GetChapterBySlug = z.infer<typeof GetChapterBySlug>;
 
 export const GetLibraryStatus = z.object({
   syncing: z.boolean(),
