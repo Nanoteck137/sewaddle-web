@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
   import Modal from "$lib/components/Modal.svelte";
   import {
     ArrowBigLeft,
@@ -17,6 +18,28 @@
 
   let sideMenuOpen = $state(false);
 </script>
+
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === "ArrowLeft" || e.key === "j") {
+      e.preventDefault();
+      if (!data.isFirstPage) {
+        goto(`?page=${data.page - 1}&layout=${data.layout}`);
+      }
+    }
+
+    if (e.key === "ArrowRight" || e.key === "k") {
+      e.preventDefault();
+      if (data.isLastPage) {
+        goto(
+          `?page=${data.page}&layout=${data.layout}&showLastPageModal=true`,
+        );
+      } else {
+        goto(`?page=${data.page + 1}&layout=${data.layout}`);
+      }
+    }
+  }}
+/>
 
 {#if data.layout === "paged"}
   <div class="flex h-screen w-full items-center justify-center py-2">
